@@ -80,6 +80,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Personalisierter 3D-Kartenhalter fürs Gym" },
       { name: "description", content: "Nie wieder Kartenchaos. Dein Name, deine Karte, dein Style – lokal 3D-gedruckt für dein Fitnessstudio." },
       { property: "og:type", content: "website" },
+      { property: "og:title", content: "Personalisierter 3D-Kartenhalter fürs Gym" },
+      { name: "twitter:title", content: "Personalisierter 3D-Kartenhalter fürs Gym" },
+      { property: "og:description", content: "Nie wieder Kartenchaos. Dein Name, deine Karte, dein Style – lokal 3D-gedruckt für dein Fitnessstudio." },
+      { name: "twitter:description", content: "Nie wieder Kartenchaos. Dein Name, deine Karte, dein Style – lokal 3D-gedruckt für dein Fitnessstudio." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/42d6c73c-e444-455c-a893-931c43099788/id-preview-1c360243--f7cf723e-3714-4a28-82ff-6958946abd34.lovable.app-1782319203290.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/42d6c73c-e444-455c-a893-931c43099788/id-preview-1c360243--f7cf723e-3714-4a28-82ff-6958946abd34.lovable.app-1782319203290.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
