@@ -79,7 +79,7 @@ const BAND_HEX: Record<BandColor, string> = {
   Weiß: "#f5f5f5",
 };
 
-const BASE_PRICE = 790; // cents
+const BASE_PRICE = 990; // cents
 const BAND_PRICE = 100;
 const PHONE_PRICE = 100;
 
