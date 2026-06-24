@@ -268,16 +268,28 @@ function LandingPage() {
 
           <div className="relative">
             <div
-              className="overflow-hidden rounded-2xl border border-border/80 bg-white"
+              className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black p-6 sm:p-8"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <img
-                src={heroImage}
-                alt="Schwarzer 3D-gedruckter Gym-Kartenhalter mit roter erhabener Schrift, daneben offener Halter mit eingesteckter roter Mitgliedskarte"
+                src={productFront.url}
+                alt="Schwarzer 3D-gedruckter Kartenhalter mit roter Schrift „Moritz Klösters“, Fitness First Logo und Telefonnummer"
                 width={1280}
-                height={1280}
-                className="aspect-square w-full object-cover"
+                height={960}
+                className="mx-auto block w-full max-w-[420px] object-contain drop-shadow-[0_20px_40px_rgba(230,57,70,0.25)]"
               />
+              <div className="pointer-events-none absolute -bottom-4 right-3 w-32 rotate-6 rounded-xl border border-border/60 bg-background/90 p-2 shadow-2xl sm:w-40">
+                <img
+                  src={productOpen.url}
+                  alt="Geöffneter Kartenhalter mit eingesteckter roter Mitgliedskarte"
+                  width={640}
+                  height={320}
+                  className="block w-full rounded-md object-contain"
+                />
+                <div className="mt-1 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Karte rein · fertig
+                </div>
+              </div>
             </div>
             <div
               className="pointer-events-none absolute -inset-6 -z-10 rounded-full opacity-60 blur-3xl"
