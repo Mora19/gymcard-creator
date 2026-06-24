@@ -82,12 +82,42 @@ const BAND_HEX: Record<BandColor, string> = {
 const BASE_PRICE = 990; // cents
 const BAND_PRICE = 100;
 const PHONE_PRICE = 100;
+const MAX_HOLDER_NAME_LENGTH = 24;
+
+const INVALID_TEXT_COLORS_BY_HOLDER: Record<HolderColor, readonly TextColor[]> = {
+  Schwarz: ["Schwarz"],
+  Weiß: ["Weiß"],
+  Rot: ["Rot"],
+  Dunkelgrau: ["Schwarz"],
+};
+
+const TEXT_COLOR_FALLBACK_BY_HOLDER: Record<HolderColor, TextColor> = {
+  Schwarz: "Rot",
+  Weiß: "Schwarz",
+  Rot: "Weiß",
+  Dunkelgrau: "Rot",
+};
+
+function isTextColorReadable(holderColor: HolderColor, textColor: TextColor) {
+  return !INVALID_TEXT_COLORS_BY_HOLDER[holderColor].includes(textColor);
+}
+
+function getSafeTextColor(holderColor: HolderColor, textColor: TextColor) {
+  return isTextColorReadable(holderColor, textColor)
+    ? textColor
+    : TEXT_COLOR_FALLBACK_BY_HOLDER[holderColor];
+}
+
+function getPreviewNameFontSize(name: string) {
+  const overage = Math.max(0, name.length - 10);
+  return Math.max(16, 27 - overage * 0.85);
+}
 
 function LandingPage() {
   // Configurator state
   const [withLogo, setWithLogo] = useState(false);
   const [withName, setWithName] = useState(true);
-  const [name, setName] = useState("MORITZ");
+  const [name, setName] = useState("Moritz Klösters");
   const [withPhoneOnHolder, setWithPhoneOnHolder] = useState(true);
   const [phoneOnHolder, setPhoneOnHolder] = useState("0176 42697714");
   const [holderColor, setHolderColor] = useState<HolderColor>("Schwarz");
@@ -113,6 +143,15 @@ function LandingPage() {
   }, [withBand, withPhoneOnHolder]);
 
   const submit = useServerFn(submitOrder);
+
+  function handleHolderColorChange(nextHolderColor: HolderColor) {
+    setHolderColor(nextHolderColor);
+    setTextColor((currentTextColor) => getSafeTextColor(nextHolderColor, currentTextColor));
+  }
+
+  function handleTextColorChange(nextTextColor: TextColor) {
+    setTextColor(getSafeTextColor(holderColor, nextTextColor));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -193,7 +232,7 @@ function LandingPage() {
             <div className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-brand text-brand-foreground">
               <Tag className="h-4 w-4" />
             </div>
-            <span className="font-display text-lg font-bold tracking-tight">GymTag</span>
+            <span className="font-display text-lg font-bold">GymTag</span>
           </div>
           <Button
             onClick={scrollToConfig}
@@ -213,25 +252,25 @@ function LandingPage() {
         {/* red diagonal accent like flyer */}
         <div
           aria-hidden
-          className="pointer-events-none absolute right-0 top-0 hidden h-48 w-2/3 md:block"
+          className="pointer-events-none absolute right-0 top-0 hidden h-48 w-2/3 lg:block"
           style={{
             background:
               "linear-gradient(115deg, transparent 55%, #e63946 55%, #e63946 60%, transparent 60%, transparent 65%, #e63946 65%, #e63946 68%, transparent 68%)",
           }}
         />
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 pb-14 pt-10 md:grid-cols-[1.05fr_1fr] md:items-center md:py-20">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 pb-14 pt-10 md:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:py-20">
           <div>
             <div className="mb-5 inline-flex items-center gap-2 rounded-sm bg-brand px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-brand-foreground">
               <Sparkles className="h-3.5 w-3.5" /> Testaktion · Lokal gefertigt
             </div>
-            <h1 className="font-display text-5xl font-black uppercase leading-[0.95] tracking-tight md:text-7xl">
+            <h1 className="font-display text-5xl font-black uppercase leading-[0.95] md:text-7xl">
               Nie wieder
               <br />
               <span className="text-brand">Kartenchaos.</span>
             </h1>
             <p className="mt-5 max-w-lg text-base text-muted-foreground md:text-lg">
-              Personalisierter Kartenhalter für deine Gym-Karte – mit Name,
-              optional mit Telefonnummer und Band für die Flasche.
+              Personalisierter Kartenhalter für deine Gym-Karte – mit Name, optional mit
+              Telefonnummer und Band für die Flasche.
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -266,9 +305,9 @@ function LandingPage() {
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative mx-auto w-full max-w-md lg:max-w-none">
             <div
-              className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black p-6 sm:p-8"
+              className="relative overflow-visible rounded-2xl border border-border/80 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black p-4 pb-20 sm:p-8 sm:pb-20 lg:pb-8"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <img
@@ -276,15 +315,15 @@ function LandingPage() {
                 alt="Schwarzer 3D-gedruckter Kartenhalter mit roter Schrift „Moritz Klösters“, Fitness First Logo und Telefonnummer"
                 width={1280}
                 height={960}
-                className="mx-auto block w-full max-w-[420px] object-contain drop-shadow-[0_20px_40px_rgba(230,57,70,0.25)]"
+                className="relative z-10 mx-auto block max-h-[360px] w-full max-w-[420px] rounded-xl bg-black/80 object-contain p-1 drop-shadow-[0_20px_40px_rgba(230,57,70,0.25)] sm:max-h-[440px]"
               />
-              <div className="pointer-events-none absolute -bottom-4 right-3 w-32 rotate-6 rounded-xl border border-border/60 bg-background/90 p-2 shadow-2xl sm:w-40">
+              <div className="pointer-events-none absolute bottom-3 right-3 z-20 w-28 rotate-3 rounded-xl border border-border/60 bg-black/95 p-2 shadow-2xl sm:bottom-4 sm:right-4 sm:w-40">
                 <img
                   src={productOpen.url}
                   alt="Geöffneter Kartenhalter mit eingesteckter roter Mitgliedskarte"
                   width={640}
                   height={320}
-                  className="block w-full rounded-md object-contain"
+                  className="block w-full rounded-md bg-black object-contain"
                 />
                 <div className="mt-1 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   Karte rein · fertig
@@ -293,7 +332,9 @@ function LandingPage() {
             </div>
             <div
               className="pointer-events-none absolute -inset-6 -z-10 rounded-full opacity-60 blur-3xl"
-              style={{ background: "radial-gradient(circle, oklch(0.62 0.24 25 / 0.4), transparent 70%)" }}
+              style={{
+                background: "radial-gradient(circle, oklch(0.62 0.24 25 / 0.4), transparent 70%)",
+              }}
             />
           </div>
         </div>
@@ -331,10 +372,10 @@ function LandingPage() {
             </h2>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-[1fr_1.1fr]">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
             {/* PREVIEW */}
-            <div className="md:sticky md:top-24 md:self-start">
-              <div className="rounded-2xl border border-border bg-surface p-6">
+            <div className="lg:sticky lg:top-24 lg:self-start">
+              <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6">
                 <HolderPreview
                   holderColor={holderColor}
                   textColor={textColor}
@@ -366,10 +407,10 @@ function LandingPage() {
                 />
                 {withName && (
                   <Input
-                    placeholder="z. B. MORITZ"
+                    placeholder="z. B. Moritz Klösters"
                     value={name}
-                    onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 14))}
-                    maxLength={14}
+                    onChange={(e) => setName(e.target.value.slice(0, MAX_HOLDER_NAME_LENGTH))}
+                    maxLength={MAX_HOLDER_NAME_LENGTH}
                     className="bg-background"
                   />
                 )}
@@ -389,26 +430,28 @@ function LandingPage() {
                 )}
                 <ToggleRow
                   label="Studio-Logo"
-                  hint="Studio-Logo nur mit offizieller Freigabe möglich. Vorschau zeigt neutrales „GYM“."
+                  hint="Studio-Logo nur mit offizieller Freigabe möglich."
                   checked={withLogo}
                   onChange={setWithLogo}
                 />
               </ConfigCard>
 
-              <ConfigCard title="Look">
+              <ConfigCard title="Look / Farben">
                 <ColorRow
                   label="Halterfarbe"
                   options={HOLDER_COLORS}
                   value={holderColor}
-                  onChange={setHolderColor}
+                  onChange={handleHolderColorChange}
                   hexMap={HOLDER_HEX}
                 />
                 <ColorRow
                   label="Textfarbe"
                   options={TEXT_COLORS}
                   value={textColor}
-                  onChange={setTextColor}
+                  onChange={handleTextColorChange}
                   hexMap={TEXT_HEX}
+                  disabledOptions={INVALID_TEXT_COLORS_BY_HOLDER[holderColor]}
+                  disabledReason="Diese Kombination wäre zu wenig kontrastreich."
                 />
               </ConfigCard>
 
@@ -487,8 +530,8 @@ function LandingPage() {
                       className="mt-0.5"
                     />
                     <span className="text-muted-foreground">
-                      Ich stimme der Verarbeitung meiner Daten zur Bearbeitung
-                      meiner Bestellung zu (Datenschutz).
+                      Ich stimme der Verarbeitung meiner Daten zur Bearbeitung meiner Bestellung zu
+                      (Datenschutz).
                     </span>
                   </label>
                 </div>
@@ -501,9 +544,8 @@ function LandingPage() {
                     Bestellung erhalten!
                   </h3>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Wir melden uns kurz per WhatsApp und geben dir Bescheid,
-                    sobald dein Halter zur Abholung im Studio bereit ist
-                    (in der Regel innerhalb einer Woche).
+                    Wir melden uns kurz per WhatsApp und geben dir Bescheid, sobald dein Halter zur
+                    Abholung im Studio bereit ist (in der Regel innerhalb einer Woche).
                   </p>
                   <Button
                     asChild
@@ -514,9 +556,7 @@ function LandingPage() {
                       <Phone className="mr-2 h-4 w-4" /> Zusammenfassung per WhatsApp senden
                     </a>
                   </Button>
-                  <p className="mt-3 text-xs text-muted-foreground">
-                    Geht direkt an 0176 42697714
-                  </p>
+                  <p className="mt-3 text-xs text-muted-foreground">Geht direkt an 0176 42697714</p>
                 </div>
               ) : (
                 <Button
@@ -552,9 +592,24 @@ function LandingPage() {
           </div>
           <div className="grid gap-5 md:grid-cols-3">
             {[
-              { n: "01", icon: Sparkles, title: "Konfigurieren", text: "Farbe, Name, Telefonnummer und Band – in 60 Sekunden zusammengestellt." },
-              { n: "02", icon: Phone, title: "Bestellung absenden", text: "Wir melden uns per WhatsApp und bestätigen dir alle Details." },
-              { n: "03", icon: Clock, title: "Innerhalb 1 Woche abholen", text: "Sobald fertig, holst du den Halter direkt im Studio an der Theke ab." },
+              {
+                n: "01",
+                icon: Sparkles,
+                title: "Konfigurieren",
+                text: "Farbe, Name, Telefonnummer und Band – in 60 Sekunden zusammengestellt.",
+              },
+              {
+                n: "02",
+                icon: Phone,
+                title: "Bestellung absenden",
+                text: "Wir melden uns per WhatsApp und bestätigen dir alle Details.",
+              },
+              {
+                n: "03",
+                icon: Clock,
+                title: "Innerhalb 1 Woche abholen",
+                text: "Sobald fertig, holst du den Halter direkt im Studio an der Theke ab.",
+              },
             ].map((s) => (
               <div key={s.n} className="relative rounded-xl border border-border bg-surface p-7">
                 <div className="absolute -top-3 left-6 rounded-sm bg-brand px-2 py-1 text-xs font-black uppercase tracking-wider text-brand-foreground">
@@ -579,12 +634,36 @@ function LandingPage() {
           </h2>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { icon: CreditCard, title: "Nie wieder lose Karte", text: "Schluss mit Suchen am Empfang. Karte sitzt fest im Halter." },
-              { icon: Tag, title: "Sofort dein Halter", text: "Dein Name groß und rot. Direkt erkennbar, wem die Karte gehört." },
-              { icon: ShieldCheck, title: "Telefonnummer bei Verlust", text: "Optional auf den Halter gedruckt – damit deine Karte schnell zurückfindet." },
-              { icon: Package, title: "Band für die Flasche", text: "Mit Band hängt der Halter direkt an deiner Trinkflasche – nie wieder vergessen." },
-              { icon: Clock, title: "In 1 Woche im Studio", text: "Wenige Tage Fertigung. Abholung direkt an der Theke deines Studios." },
-              { icon: MapPin, title: "Lokal gefertigt", text: "Hier 3D-gedruckt – individuell für dich produziert, nichts von der Stange." },
+              {
+                icon: CreditCard,
+                title: "Nie wieder lose Karte",
+                text: "Schluss mit Suchen am Empfang. Karte sitzt fest im Halter.",
+              },
+              {
+                icon: Tag,
+                title: "Sofort dein Halter",
+                text: "Dein Name groß und rot. Direkt erkennbar, wem die Karte gehört.",
+              },
+              {
+                icon: ShieldCheck,
+                title: "Telefonnummer bei Verlust",
+                text: "Optional auf den Halter gedruckt – damit deine Karte schnell zurückfindet.",
+              },
+              {
+                icon: Package,
+                title: "Band für die Flasche",
+                text: "Mit Band hängt der Halter direkt an deiner Trinkflasche – nie wieder vergessen.",
+              },
+              {
+                icon: Clock,
+                title: "In 1 Woche im Studio",
+                text: "Wenige Tage Fertigung. Abholung direkt an der Theke deines Studios.",
+              },
+              {
+                icon: MapPin,
+                title: "Lokal gefertigt",
+                text: "Hier 3D-gedruckt – individuell für dich produziert, nichts von der Stange.",
+              },
             ].map((b) => (
               <div
                 key={b.title}
@@ -690,11 +769,7 @@ function LandingPage() {
               <div className="font-display text-xl font-black">0176 42697714</div>
             </div>
           </div>
-          <Button
-            asChild
-            size="lg"
-            className="bg-brand text-brand-foreground hover:bg-brand/90"
-          >
+          <Button asChild size="lg" className="bg-brand text-brand-foreground hover:bg-brand/90">
             <a href={whatsappFrage} target="_blank" rel="noreferrer">
               Direkt fragen
             </a>
@@ -712,11 +787,20 @@ function LandingPage() {
             <span className="font-display font-black uppercase text-foreground">GymTag</span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-5">
-            <a href={whatsappFrage} target="_blank" rel="noreferrer" className="hover:text-foreground">
+            <a
+              href={whatsappFrage}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-foreground"
+            >
               WhatsApp Kontakt
             </a>
-            <a href="#" className="hover:text-foreground">Impressum</a>
-            <a href="#" className="hover:text-foreground">Datenschutz</a>
+            <a href="#" className="hover:text-foreground">
+              Impressum
+            </a>
+            <a href="#" className="hover:text-foreground">
+              Datenschutz
+            </a>
           </div>
         </div>
       </footer>
@@ -780,12 +864,16 @@ function ColorRow<T extends string>({
   value,
   onChange,
   hexMap,
+  disabledOptions,
+  disabledReason,
 }: {
   label: string;
   options: readonly T[];
   value: T;
   onChange: (v: T) => void;
   hexMap: Record<T, string>;
+  disabledOptions?: readonly T[];
+  disabledReason?: string;
 }) {
   return (
     <div>
@@ -793,15 +881,22 @@ function ColorRow<T extends string>({
       <div className="flex flex-wrap gap-2">
         {options.map((o) => {
           const active = o === value;
+          const disabled = disabledOptions?.includes(o) ?? false;
           return (
             <button
               key={o}
               type="button"
-              onClick={() => onChange(o)}
+              onClick={() => {
+                if (!disabled) onChange(o);
+              }}
+              disabled={disabled}
+              title={disabled ? disabledReason : undefined}
               className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                active
-                  ? "border-brand bg-brand/15 text-foreground"
-                  : "border-border bg-background text-muted-foreground hover:border-brand/40"
+                disabled
+                  ? "cursor-not-allowed border-border bg-background text-muted-foreground opacity-40"
+                  : active
+                    ? "border-brand bg-brand/15 text-foreground"
+                    : "border-border bg-background text-muted-foreground hover:border-brand/40"
               }`}
             >
               <span
@@ -859,16 +954,19 @@ function HolderPreview({
   // 3D-print line texture
   const textureLines = Array.from({ length: 46 }, (_, i) => 28 + i * 6);
 
-  const displayName = (name || "Dein Name").slice(0, 18);
-  const displayPhone = phone || "0170 1234567";
+  const displayName = (name.trim() || "Dein Name").slice(0, MAX_HOLDER_NAME_LENGTH);
+  const displayPhone = (phone.trim() || "0170 1234567").slice(0, 25);
+  const nameFontSize = getPreviewNameFontSize(displayName);
+  const phoneFontSize = displayPhone.length > 17 ? 18 : 21;
 
   // Fixed zones (vertical centers, in viewBox 360x300)
+  const CARD_TEXT_X = 102;
   const Y_NAME = 88;
   const Y_LOGO = 158;
-  const Y_PHONE = 238;
+  const Y_PHONE = 234;
 
   return (
-    <div className="relative mx-auto w-full max-w-sm">
+    <div className="relative mx-auto w-full max-w-md lg:max-w-sm">
       <svg
         viewBox="0 0 360 300"
         className="w-full drop-shadow-2xl"
@@ -956,14 +1054,14 @@ function HolderPreview({
         {withName && (
           <g filter="url(#raised)">
             <text
-              x="197"
+              x={CARD_TEXT_X}
               y={Y_NAME}
-              textAnchor="middle"
+              textAnchor="start"
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize={displayName.length > 12 ? 22 : 26}
+              fontSize={nameFontSize}
               fontWeight="800"
-              letterSpacing="0.3"
+              letterSpacing={displayName.length > 18 ? "0" : "0.3"}
             >
               {displayName}
             </text>
@@ -974,7 +1072,7 @@ function HolderPreview({
         {withLogo && (
           <g filter="url(#raised)">
             {/* Big F block */}
-            <g transform="translate(95, 132)">
+            <g transform={`translate(${CARD_TEXT_X}, 132)`}>
               <rect x="0" y="0" width="42" height="48" rx="3" fill={textHex} />
               <text
                 x="21"
@@ -990,16 +1088,16 @@ function HolderPreview({
             </g>
             {/* Studio line */}
             <text
-              x="150"
+              x={CARD_TEXT_X + 54}
               y={Y_LOGO + 10}
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize="26"
+              fontSize="25"
               fontWeight="800"
               fontStyle="italic"
-              letterSpacing="0.5"
+              letterSpacing="0.2"
             >
-              Studio Logo
+              Fitness First
             </text>
           </g>
         )}
@@ -1008,14 +1106,14 @@ function HolderPreview({
         {withPhone && (
           <g filter="url(#raised)">
             <text
-              x="197"
+              x={CARD_TEXT_X}
               y={Y_PHONE}
-              textAnchor="middle"
+              textAnchor="start"
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize="22"
+              fontSize={phoneFontSize}
               fontWeight="800"
-              letterSpacing="1"
+              letterSpacing="0.6"
             >
               {displayPhone}
             </text>
@@ -1038,9 +1136,7 @@ function HolderPreview({
       </svg>
 
       <div className="mt-3 space-y-1 text-center">
-        <div className="text-xs text-muted-foreground">
-          Live-Vorschau · echte 3D-Druck-Optik
-        </div>
+        <div className="text-xs text-muted-foreground">Live-Vorschau · echte 3D-Druck-Optik</div>
         {withLogo && (
           <div className="text-[11px] text-muted-foreground/80">
             Studio-Logo nur mit offizieller Freigabe möglich.
@@ -1050,4 +1146,3 @@ function HolderPreview({
     </div>
   );
 }
-
