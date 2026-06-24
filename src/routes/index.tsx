@@ -28,7 +28,8 @@ import {
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import heroImage from "@/assets/hero-card-holder.jpg";
+import productFront from "@/assets/product-front.png.asset.json";
+import productOpen from "@/assets/product-open.png.asset.json";
 import { submitOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/")({
@@ -78,7 +79,7 @@ const BAND_HEX: Record<BandColor, string> = {
   Weiß: "#f5f5f5",
 };
 
-const BASE_PRICE = 790; // cents
+const BASE_PRICE = 990; // cents
 const BAND_PRICE = 100;
 const PHONE_PRICE = 100;
 
@@ -267,16 +268,28 @@ function LandingPage() {
 
           <div className="relative">
             <div
-              className="overflow-hidden rounded-2xl border border-border/80 bg-white"
+              className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black p-6 sm:p-8"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <img
-                src={heroImage}
-                alt="Schwarzer 3D-gedruckter Gym-Kartenhalter mit roter erhabener Schrift, daneben offener Halter mit eingesteckter roter Mitgliedskarte"
+                src={productFront.url}
+                alt="Schwarzer 3D-gedruckter Kartenhalter mit roter Schrift „Moritz Klösters“, Fitness First Logo und Telefonnummer"
                 width={1280}
-                height={1280}
-                className="aspect-square w-full object-cover"
+                height={960}
+                className="mx-auto block w-full max-w-[420px] object-contain drop-shadow-[0_20px_40px_rgba(230,57,70,0.25)]"
               />
+              <div className="pointer-events-none absolute -bottom-4 right-3 w-32 rotate-6 rounded-xl border border-border/60 bg-background/90 p-2 shadow-2xl sm:w-40">
+                <img
+                  src={productOpen.url}
+                  alt="Geöffneter Kartenhalter mit eingesteckter roter Mitgliedskarte"
+                  width={640}
+                  height={320}
+                  className="block w-full rounded-md object-contain"
+                />
+                <div className="mt-1 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Karte rein · fertig
+                </div>
+              </div>
             </div>
             <div
               className="pointer-events-none absolute -inset-6 -z-10 rounded-full opacity-60 blur-3xl"
@@ -598,13 +611,13 @@ function LandingPage() {
             Testaktion
           </span>
           <h2 className="mt-5 font-display text-5xl font-black uppercase md:text-6xl">
-            Ab <span className="text-brand">7,90 €</span>
+            Ab <span className="text-brand">9,90 €</span>
           </h2>
           <p className="mt-4 text-muted-foreground">
             Basis-Halter mit Name in deiner Wunschfarbe. Erweiterbar – ganz nach dir.
           </p>
           <div className="mx-auto mt-8 max-w-md space-y-2 rounded-xl border border-border bg-surface p-6 text-left text-sm">
-            <PriceRow label="Basis-Halter (personalisiert)" value="7,90 €" />
+            <PriceRow label="Basis-Halter (personalisiert)" value="9,90 €" />
             <PriceRow label="Band für die Flasche" value="+1,00 €" />
             <PriceRow label="Telefonnummer auf Halter" value="+1,00 €" />
             <PriceRow label="Weitere Extras auf Anfrage" value="—" muted />
@@ -815,7 +828,7 @@ function PriceRow({ label, value, muted }: { label: string; value: string; muted
   );
 }
 
-/* ---------- live preview (looks like the real 3D-printed holder) ---------- */
+/* ---------- live preview (real 3D-printed holder, fixed 3-zone layout) ---------- */
 
 function HolderPreview({
   holderColor,
@@ -843,185 +856,160 @@ function HolderPreview({
   const bandHex = BAND_HEX[bandColor];
   const isLightHolder = holderColor === "Weiß";
 
-  // Build subtle 3D-print line texture
-  const textureLines = Array.from({ length: 40 }, (_, i) => 30 + i * 7);
+  // 3D-print line texture
+  const textureLines = Array.from({ length: 46 }, (_, i) => 28 + i * 6);
 
-  const displayName = (name || "DEIN NAME").slice(0, 14);
+  const displayName = (name || "Dein Name").slice(0, 18);
   const displayPhone = phone || "0170 1234567";
+
+  // Fixed zones (vertical centers, in viewBox 360x300)
+  const Y_NAME = 88;
+  const Y_LOGO = 158;
+  const Y_PHONE = 238;
 
   return (
     <div className="relative mx-auto w-full max-w-sm">
       <svg
-        viewBox="0 0 360 280"
+        viewBox="0 0 360 300"
         className="w-full drop-shadow-2xl"
         aria-label="Vorschau Kartenhalter"
       >
         <defs>
           <linearGradient id="holderShade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.16" />
-            <stop offset="55%" stopColor="#ffffff" stopOpacity="0.03" />
-            <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
-          </linearGradient>
-          <linearGradient id="textShade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.14" />
+            <stop offset="55%" stopColor="#ffffff" stopOpacity="0.02" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.4" />
           </linearGradient>
           <filter id="raised" x="-10%" y="-10%" width="120%" height="120%">
-            <feGaussianBlur stdDeviation="0.6" />
+            <feGaussianBlur stdDeviation="0.5" />
           </filter>
           <clipPath id="cardClip">
-            <rect x="55" y="35" width="280" height="210" rx="18" />
+            <rect x="58" y="30" width="278" height="240" rx="20" />
           </clipPath>
         </defs>
 
-        {/* Band */}
+        {/* Band through eyelet */}
         {withBand && (
           <g>
             <path
-              d="M 40 60 Q 10 35 28 18 Q 48 4 60 28"
+              d="M 42 152 Q 8 130 22 100 Q 40 78 58 110"
               stroke={bandHex}
-              strokeWidth="9"
+              strokeWidth="10"
               fill="none"
               strokeLinecap="round"
               opacity="0.95"
             />
             <path
-              d="M 40 60 Q 10 35 28 18 Q 48 4 60 28"
+              d="M 42 152 Q 8 130 22 100 Q 40 78 58 110"
               stroke="#000000"
-              strokeWidth="9"
+              strokeWidth="10"
               fill="none"
               strokeLinecap="round"
-              opacity="0.15"
+              opacity="0.18"
             />
           </g>
         )}
 
-        {/* Card body */}
-        <rect
-          x="55"
-          y="35"
-          width="280"
-          height="210"
-          rx="18"
-          fill={holderHex}
-          stroke={isLightHolder ? "#bdbdbd" : "#000000"}
-          strokeWidth="1.2"
-        />
-
-        {/* 3D print line texture inside the body */}
-        <g clipPath="url(#cardClip)" opacity={isLightHolder ? 0.08 : 0.18}>
-          {textureLines.map((y) => (
-            <line
-              key={y}
-              x1="55"
-              x2="335"
-              y1={y}
-              y2={y}
-              stroke={isLightHolder ? "#000000" : "#ffffff"}
-              strokeWidth="0.6"
-            />
-          ))}
-        </g>
-
-        {/* Shading overlay */}
-        <rect x="55" y="35" width="280" height="210" rx="18" fill="url(#holderShade)" />
-
-        {/* Eyelet ear on the left */}
+        {/* Eyelet ear */}
         <g>
           <path
-            d="M 55 110 Q 35 110 30 125 Q 28 140 30 155 Q 35 170 55 170 Z"
+            d="M 58 130 Q 36 130 30 150 Q 28 165 30 180 Q 36 200 58 200 Z"
             fill={holderHex}
             stroke={isLightHolder ? "#bdbdbd" : "#000000"}
             strokeWidth="1.2"
           />
-          <circle
-            cx="42"
-            cy="140"
-            r="8"
-            fill="#000000"
-            opacity="0.55"
-          />
-          <circle cx="42" cy="140" r="5.5" fill="#1a1a1a" />
+          <ellipse cx="44" cy="165" rx="9" ry="11" fill="#000000" opacity="0.6" />
+          <ellipse cx="44" cy="165" rx="6" ry="8" fill="#0a0a0a" />
         </g>
 
-        {/* Card slot (subtle inner outline like the real opened holder) */}
+        {/* Card body */}
         <rect
-          x="70"
-          y="55"
-          width="250"
-          height="170"
-          rx="10"
-          fill="none"
-          stroke={isLightHolder ? "#999" : "#ffffff"}
-          strokeOpacity={isLightHolder ? 0.4 : 0.08}
-          strokeWidth="1"
+          x="58"
+          y="30"
+          width="278"
+          height="240"
+          rx="20"
+          fill={holderHex}
+          stroke={isLightHolder ? "#bdbdbd" : "#000000"}
+          strokeWidth="1.4"
         />
 
-        {/* Logo (neutral GYM symbol) */}
-        {withLogo && (
-          <g transform="translate(78, 78)">
-            <rect
-              x="0"
-              y="0"
-              width="58"
-              height="28"
-              rx="6"
-              fill={textHex}
-              opacity="0.16"
+        {/* 3D print texture */}
+        <g clipPath="url(#cardClip)" opacity={isLightHolder ? 0.07 : 0.22}>
+          {textureLines.map((y) => (
+            <line
+              key={y}
+              x1="58"
+              x2="336"
+              y1={y}
+              y2={y}
+              stroke={isLightHolder ? "#000000" : "#ffffff"}
+              strokeWidth="0.5"
             />
-            <text
-              x="29"
-              y="20"
-              textAnchor="middle"
-              fill={textHex}
-              fontFamily="Space Grotesk, sans-serif"
-              fontWeight="900"
-              fontSize="16"
-              letterSpacing="2"
-            >
-              GYM
-            </text>
-          </g>
-        )}
+          ))}
+        </g>
 
-        {/* NAME — large, raised, top */}
+        {/* Shading */}
+        <rect x="58" y="30" width="278" height="240" rx="20" fill="url(#holderShade)" />
+
+        {/* ZONE 1 — NAME (top) */}
         {withName && (
           <g filter="url(#raised)">
             <text
-              x="195"
-              y={withLogo ? 122 : 130}
+              x="197"
+              y={Y_NAME}
               textAnchor="middle"
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize={displayName.length > 9 ? 32 : 40}
-              fontWeight="900"
-              letterSpacing="1.5"
-            >
-              {displayName}
-            </text>
-            {/* highlight stroke for raised look */}
-            <text
-              x="195"
-              y={withLogo ? 122 : 130}
-              textAnchor="middle"
-              fill="url(#textShade)"
-              fontFamily="Space Grotesk, sans-serif"
-              fontSize={displayName.length > 9 ? 32 : 40}
-              fontWeight="900"
-              letterSpacing="1.5"
-              opacity="0.5"
+              fontSize={displayName.length > 12 ? 22 : 26}
+              fontWeight="800"
+              letterSpacing="0.3"
             >
               {displayName}
             </text>
           </g>
         )}
 
-        {/* PHONE — bottom */}
+        {/* ZONE 2 — LOGO row (middle): big F + studio line */}
+        {withLogo && (
+          <g filter="url(#raised)">
+            {/* Big F block */}
+            <g transform="translate(95, 132)">
+              <rect x="0" y="0" width="42" height="48" rx="3" fill={textHex} />
+              <text
+                x="21"
+                y="38"
+                textAnchor="middle"
+                fill={holderHex}
+                fontFamily="Space Grotesk, sans-serif"
+                fontSize="40"
+                fontWeight="900"
+              >
+                F
+              </text>
+            </g>
+            {/* Studio line */}
+            <text
+              x="150"
+              y={Y_LOGO + 10}
+              fill={textHex}
+              fontFamily="Space Grotesk, sans-serif"
+              fontSize="26"
+              fontWeight="800"
+              fontStyle="italic"
+              letterSpacing="0.5"
+            >
+              Studio Logo
+            </text>
+          </g>
+        )}
+
+        {/* ZONE 3 — PHONE (bottom) */}
         {withPhone && (
           <g filter="url(#raised)">
             <text
-              x="195"
-              y={withName ? 195 : 150}
+              x="197"
+              y={Y_PHONE}
               textAnchor="middle"
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
@@ -1036,8 +1024,8 @@ function HolderPreview({
 
         {!withName && !withPhone && !withLogo && (
           <text
-            x="195"
-            y="145"
+            x="197"
+            y="158"
             textAnchor="middle"
             fill={textHex}
             opacity="0.5"
@@ -1049,9 +1037,17 @@ function HolderPreview({
         )}
       </svg>
 
-      <div className="mt-3 text-center text-xs text-muted-foreground">
-        Live-Vorschau · echte 3D-Druck-Optik
+      <div className="mt-3 space-y-1 text-center">
+        <div className="text-xs text-muted-foreground">
+          Live-Vorschau · echte 3D-Druck-Optik
+        </div>
+        {withLogo && (
+          <div className="text-[11px] text-muted-foreground/80">
+            Studio-Logo nur mit offizieller Freigabe möglich.
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
