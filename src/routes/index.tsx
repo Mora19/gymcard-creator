@@ -7,11 +7,12 @@ import {
   Sparkles,
   CheckCircle2,
   ShieldCheck,
-  Zap,
   MapPin,
   Package,
   Loader2,
-  ChevronDown,
+  Tag,
+  Link2,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,21 +34,24 @@ import { submitOrder } from "@/lib/orders.functions";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Personalisierter 3D-Kartenhalter fürs Gym – ab 7,90 €" },
+      { title: "Nie wieder Kartenchaos – personalisierter Gym-Kartenhalter" },
       {
         name: "description",
         content:
-          "Nie wieder Kartenchaos. Personalisierter 3D-gedruckter Kartenhalter für deine Gym-Karte – mit Name, optional Telefonnummer und Band für die Flasche. Abholung im Studio.",
+          "3D-gedruckter Kartenhalter für deine Gym-Karte. Mit Name, optional Telefonnummer und Band für die Flasche. Lokal gefertigt, im Studio abholbar.",
       },
       { property: "og:title", content: "Nie wieder Kartenchaos – dein Gym-Kartenhalter" },
       {
         property: "og:description",
-        content: "Konfiguriere deinen 3D-gedruckten Kartenhalter in 60 Sekunden.",
+        content:
+          "Personalisierter Kartenhalter mit Name, Telefonnummer und Band. Jetzt in 60 Sekunden konfigurieren.",
       },
     ],
   }),
   component: LandingPage,
 });
+
+const WHATSAPP_NUMBER = "4917642697714"; // 0176 42697714
 
 const HOLDER_COLORS = ["Schwarz", "Weiß", "Rot", "Dunkelgrau"] as const;
 const TEXT_COLORS = ["Rot", "Weiß", "Schwarz"] as const;
@@ -59,9 +63,9 @@ type BandColor = (typeof BAND_COLORS)[number];
 
 const HOLDER_HEX: Record<HolderColor, string> = {
   Schwarz: "#0d0d0d",
-  Weiß: "#f5f5f5",
-  Rot: "#c8261c",
-  Dunkelgrau: "#2a2a2c",
+  Weiß: "#f1f1f1",
+  Rot: "#b81e16",
+  Dunkelgrau: "#26262a",
 };
 const TEXT_HEX: Record<TextColor, string> = {
   Rot: "#e63946",
@@ -82,9 +86,9 @@ function LandingPage() {
   // Configurator state
   const [withLogo, setWithLogo] = useState(false);
   const [withName, setWithName] = useState(true);
-  const [name, setName] = useState("ALEX");
-  const [withPhoneOnHolder, setWithPhoneOnHolder] = useState(false);
-  const [phoneOnHolder, setPhoneOnHolder] = useState("");
+  const [name, setName] = useState("MORITZ");
+  const [withPhoneOnHolder, setWithPhoneOnHolder] = useState(true);
+  const [phoneOnHolder, setPhoneOnHolder] = useState("0176 42697714");
   const [holderColor, setHolderColor] = useState<HolderColor>("Schwarz");
   const [textColor, setTextColor] = useState<TextColor>("Rot");
   const [withBand, setWithBand] = useState(true);
@@ -116,7 +120,7 @@ function LandingPage() {
       return;
     }
     if (!contactName || !contactPhone || !studio) {
-      toast.error("Bitte fülle Name, Handynummer und Studio aus.");
+      toast.error("Bitte fülle Name, WhatsApp-Nummer und Studio aus.");
       return;
     }
     setSubmitting(true);
@@ -144,19 +148,24 @@ function LandingPage() {
       const summary = [
         "*Neue Bestellung Kartenhalter*",
         `Name: ${contactName}`,
+        `WhatsApp: ${contactPhone}`,
         `Studio: ${studio}`,
         `Halter: ${holderColor}, Text: ${textColor}`,
         withName ? `Name auf Halter: ${name}` : "Ohne Name",
         withPhoneOnHolder ? `Tel auf Halter: ${phoneOnHolder}` : null,
-        withLogo ? "Mit Studio-Logo (falls freigegeben)" : null,
+        withLogo ? "Mit Studio-Logo (sofern freigegeben)" : null,
         withBand ? `Band: ${bandColor}` : "Ohne Band",
         `Preis: ${formatPrice(priceCents)}`,
+        note ? `Notiz: ${note}` : null,
       ]
         .filter(Boolean)
         .join("\n");
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(summary)}`;
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
       setSubmitted({ whatsappUrl });
-      toast.success("Bestellung gesendet! Wir melden uns kurz.");
+      toast.success("Bestellung gesendet! Wir melden uns kurz per WhatsApp.");
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     } catch (err) {
       console.error(err);
       toast.error("Etwas ist schiefgelaufen. Bitte versuche es erneut.");
@@ -168,7 +177,7 @@ function LandingPage() {
   const scrollToConfig = () =>
     document.getElementById("konfigurator")?.scrollIntoView({ behavior: "smooth" });
 
-  const whatsappFrage = `https://wa.me/?text=${encodeURIComponent(
+  const whatsappFrage = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
     "Hi! Ich habe eine Frage zum personalisierten Kartenhalter.",
   )}`;
 
@@ -177,11 +186,11 @@ function LandingPage() {
       <Toaster theme="dark" position="top-center" richColors />
 
       {/* NAV */}
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-lg">
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-lg">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
             <div className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-brand text-brand-foreground">
-              <CreditCard className="h-4 w-4" />
+              <Tag className="h-4 w-4" />
             </div>
             <span className="font-display text-lg font-bold tracking-tight">GymTag</span>
           </div>
@@ -190,7 +199,7 @@ function LandingPage() {
             size="sm"
             className="bg-brand text-brand-foreground hover:bg-brand/90"
           >
-            Personalisieren
+            Jetzt bestellen
           </Button>
         </div>
       </header>
@@ -200,12 +209,21 @@ function LandingPage() {
         className="relative overflow-hidden border-b border-border/60"
         style={{ backgroundImage: "var(--gradient-hero)" }}
       >
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 pb-16 pt-12 md:grid-cols-2 md:items-center md:py-24">
+        {/* red diagonal accent like flyer */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute right-0 top-0 hidden h-48 w-2/3 md:block"
+          style={{
+            background:
+              "linear-gradient(115deg, transparent 55%, #e63946 55%, #e63946 60%, transparent 60%, transparent 65%, #e63946 65%, #e63946 68%, transparent 68%)",
+          }}
+        />
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 pb-14 pt-10 md:grid-cols-[1.05fr_1fr] md:items-center md:py-20">
           <div>
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-sm bg-brand px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-brand-foreground">
               <Sparkles className="h-3.5 w-3.5" /> Testaktion · Lokal gefertigt
             </div>
-            <h1 className="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+            <h1 className="font-display text-5xl font-black uppercase leading-[0.95] tracking-tight md:text-7xl">
               Nie wieder
               <br />
               <span className="text-brand">Kartenchaos.</span>
@@ -219,7 +237,7 @@ function LandingPage() {
               <Button
                 size="lg"
                 onClick={scrollToConfig}
-                className="h-12 bg-brand text-base font-semibold text-brand-foreground hover:bg-brand/90"
+                className="h-12 bg-brand text-base font-bold uppercase tracking-wide text-brand-foreground hover:bg-brand/90"
               >
                 Jetzt personalisieren
               </Button>
@@ -249,12 +267,12 @@ function LandingPage() {
 
           <div className="relative">
             <div
-              className="overflow-hidden rounded-2xl border border-border/80"
+              className="overflow-hidden rounded-2xl border border-border/80 bg-white"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <img
                 src={heroImage}
-                alt="3D-gedruckter Kartenhalter mit rotem Band"
+                alt="Schwarzer 3D-gedruckter Gym-Kartenhalter mit roter erhabener Schrift, daneben offener Halter mit eingesteckter roter Mitgliedskarte"
                 width={1280}
                 height={1280}
                 className="aspect-square w-full object-cover"
@@ -268,14 +286,34 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* BENEFIT STRIP */}
+      <section className="border-b border-border/60 bg-surface/40">
+        <div className="mx-auto grid max-w-6xl gap-3 px-4 py-8 sm:grid-cols-2 md:grid-cols-5">
+          {[
+            { icon: CreditCard, t: "Nie wieder lose Karte" },
+            { icon: Tag, t: "Direkt erkennbar, wem sie gehört" },
+            { icon: Phone, t: "Optional Telefon bei Verlust" },
+            { icon: Link2, t: "Wieder an die Flasche" },
+            { icon: MapPin, t: "Lokal gefertigt · Abholung im Studio" },
+          ].map((b) => (
+            <div key={b.t} className="flex items-center gap-3">
+              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-brand/15 text-brand">
+                <b.icon className="h-4 w-4" />
+              </div>
+              <span className="text-sm font-medium leading-tight">{b.t}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* CONFIGURATOR */}
       <section id="konfigurator" className="border-b border-border/60 py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4">
           <div className="mb-10 text-center">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-brand">
+            <p className="mb-2 text-sm font-bold uppercase tracking-[0.18em] text-brand">
               Live-Konfigurator
             </p>
-            <h2 className="font-display text-4xl font-bold md:text-5xl">
+            <h2 className="font-display text-4xl font-black uppercase md:text-5xl">
               Deine Karte. Dein Name. Dein Style.
             </h2>
           </div>
@@ -297,7 +335,7 @@ function LandingPage() {
                 />
                 <div className="mt-5 flex items-baseline justify-between border-t border-border pt-4">
                   <span className="text-sm text-muted-foreground">Aktueller Preis</span>
-                  <span className="font-display text-3xl font-bold text-brand">
+                  <span className="font-display text-3xl font-black text-brand">
                     {formatPrice(priceCents)}
                   </span>
                 </div>
@@ -306,38 +344,16 @@ function LandingPage() {
 
             {/* OPTIONS + FORM */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              <ConfigCard title="Look">
-                <ColorRow
-                  label="Farbe Halter"
-                  options={HOLDER_COLORS}
-                  value={holderColor}
-                  onChange={setHolderColor}
-                  hexMap={HOLDER_HEX}
-                />
-                <ColorRow
-                  label="Farbe Text"
-                  options={TEXT_COLORS}
-                  value={textColor}
-                  onChange={setTextColor}
-                  hexMap={TEXT_HEX}
-                />
-              </ConfigCard>
-
-              <ConfigCard title="Personalisierung">
-                <ToggleRow
-                  label="Studio-Logo auf dem Halter"
-                  hint="Nur verfügbar, wenn die Nutzung des Studio-Logos freigegeben ist."
-                  checked={withLogo}
-                  onChange={setWithLogo}
-                />
+              <ConfigCard title="A · Text auf dem Halter">
                 <ToggleRow
                   label="Name auf dem Halter"
+                  hint="Erscheint groß oben – damit jeder sieht, wem die Karte gehört."
                   checked={withName}
                   onChange={setWithName}
                 />
                 {withName && (
                   <Input
-                    placeholder="z. B. ALEX"
+                    placeholder="z. B. MORITZ"
                     value={name}
                     onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 14))}
                     maxLength={14}
@@ -346,24 +362,47 @@ function LandingPage() {
                 )}
                 <ToggleRow
                   label="Telefonnummer auf dem Halter"
-                  hint="+1 € · Bei Verlust direkt erreichbar"
+                  hint="+1 € · Damit deine Karte bei Verlust leichter zurückkommt."
                   checked={withPhoneOnHolder}
                   onChange={setWithPhoneOnHolder}
                 />
                 {withPhoneOnHolder && (
                   <Input
-                    placeholder="z. B. 0170 1234567"
+                    placeholder="z. B. 0176 42697714"
                     value={phoneOnHolder}
                     onChange={(e) => setPhoneOnHolder(e.target.value.slice(0, 25))}
                     className="bg-background"
                   />
                 )}
+                <ToggleRow
+                  label="Studio-Logo"
+                  hint="Studio-Logo nur mit offizieller Freigabe möglich. Vorschau zeigt neutrales „GYM“."
+                  checked={withLogo}
+                  onChange={setWithLogo}
+                />
+              </ConfigCard>
+
+              <ConfigCard title="Look">
+                <ColorRow
+                  label="Halterfarbe"
+                  options={HOLDER_COLORS}
+                  value={holderColor}
+                  onChange={setHolderColor}
+                  hexMap={HOLDER_HEX}
+                />
+                <ColorRow
+                  label="Textfarbe"
+                  options={TEXT_COLORS}
+                  value={textColor}
+                  onChange={setTextColor}
+                  hexMap={TEXT_HEX}
+                />
               </ConfigCard>
 
               <ConfigCard title="Band für die Flasche">
                 <ToggleRow
                   label="Band hinzufügen"
-                  hint="+1 € · Hängt deine Karte an die Trinkflasche"
+                  hint="+1 € · Hängt deine Karte direkt an die Trinkflasche."
                   checked={withBand}
                   onChange={setWithBand}
                 />
@@ -378,7 +417,7 @@ function LandingPage() {
                 )}
               </ConfigCard>
 
-              <ConfigCard title="Deine Daten">
+              <ConfigCard title="B · Kontaktdaten für die Bestellung">
                 <div className="grid gap-4">
                   <Field label="Dein Name *">
                     <Input
@@ -389,10 +428,11 @@ function LandingPage() {
                       className="bg-background"
                     />
                   </Field>
-                  <Field label="Handynummer / WhatsApp *">
+                  <Field label="WhatsApp / Telefonnummer *">
                     <Input
                       required
                       type="tel"
+                      placeholder="z. B. 0170 1234567"
                       value={contactPhone}
                       onChange={(e) => setContactPhone(e.target.value)}
                       maxLength={40}
@@ -411,7 +451,7 @@ function LandingPage() {
                   <Field label="Studio / Abholort *">
                     <Input
                       required
-                      placeholder="z. B. FitX Musterstraße"
+                      placeholder="z. B. Fitness First Musterstraße"
                       value={studio}
                       onChange={(e) => setStudio(e.target.value)}
                       maxLength={120}
@@ -443,11 +483,14 @@ function LandingPage() {
 
               {submitted ? (
                 <div className="rounded-2xl border border-brand/40 bg-brand/10 p-6 text-center">
-                  <CheckCircle2 className="mx-auto mb-3 h-10 w-10 text-brand" />
-                  <h3 className="font-display text-2xl font-bold">Bestellung erhalten!</h3>
+                  <CheckCircle2 className="mx-auto mb-3 h-12 w-12 text-brand" />
+                  <h3 className="font-display text-2xl font-black uppercase">
+                    Bestellung erhalten!
+                  </h3>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Wir melden uns kurz per WhatsApp und sagen dir Bescheid,
-                    sobald dein Halter zur Abholung bereit ist.
+                    Wir melden uns kurz per WhatsApp und geben dir Bescheid,
+                    sobald dein Halter zur Abholung im Studio bereit ist
+                    (in der Regel innerhalb einer Woche).
                   </p>
                   <Button
                     asChild
@@ -458,13 +501,16 @@ function LandingPage() {
                       <Phone className="mr-2 h-4 w-4" /> Zusammenfassung per WhatsApp senden
                     </a>
                   </Button>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Geht direkt an 0176 42697714
+                  </p>
                 </div>
               ) : (
                 <Button
                   type="submit"
                   size="lg"
                   disabled={submitting}
-                  className="h-14 w-full bg-brand text-base font-bold text-brand-foreground hover:bg-brand/90"
+                  className="h-14 w-full bg-brand text-base font-black uppercase tracking-wide text-brand-foreground hover:bg-brand/90"
                 >
                   {submitting ? (
                     <>
@@ -480,20 +526,52 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* BENEFITS */}
+      {/* HOW IT WORKS */}
       <section className="border-b border-border/60 bg-surface/40 py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4">
-          <h2 className="mb-12 text-center font-display text-4xl font-bold md:text-5xl">
+          <div className="mb-10 text-center">
+            <p className="mb-2 text-sm font-bold uppercase tracking-[0.18em] text-brand">
+              In 3 Schritten
+            </p>
+            <h2 className="font-display text-4xl font-black uppercase md:text-5xl">
+              So funktioniert's
+            </h2>
+          </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            {[
+              { n: "01", icon: Sparkles, title: "Konfigurieren", text: "Farbe, Name, Telefonnummer und Band – in 60 Sekunden zusammengestellt." },
+              { n: "02", icon: Phone, title: "Bestellung absenden", text: "Wir melden uns per WhatsApp und bestätigen dir alle Details." },
+              { n: "03", icon: Clock, title: "Innerhalb 1 Woche abholen", text: "Sobald fertig, holst du den Halter direkt im Studio an der Theke ab." },
+            ].map((s) => (
+              <div key={s.n} className="relative rounded-xl border border-border bg-surface p-7">
+                <div className="absolute -top-3 left-6 rounded-sm bg-brand px-2 py-1 text-xs font-black uppercase tracking-wider text-brand-foreground">
+                  Schritt {s.n}
+                </div>
+                <div className="mt-2 grid h-10 w-10 place-items-center rounded-md bg-brand/15 text-brand">
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 font-display text-xl font-black uppercase">{s.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{s.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFITS DETAIL */}
+      <section className="border-b border-border/60 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4">
+          <h2 className="mb-12 text-center font-display text-4xl font-black uppercase md:text-5xl">
             Warum GymTag?
           </h2>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { icon: CreditCard, title: "Nie wieder lose Karte", text: "Schluss mit Suchen am Empfang. Karte sitzt fest." },
-              { icon: Sparkles, title: "Direkt wiedererkennbar", text: "Dein Name, deine Farbe – sofort dein Halter." },
-              { icon: ShieldCheck, title: "Mit Telefonnummer bei Verlust", text: "Optional eingraviert. Wer ihn findet, erreicht dich sofort." },
-              { icon: Package, title: "Band für die Flasche", text: "Hängt deine Karte direkt an die Trinkflasche." },
-              { icon: Zap, title: "Schnell im Studio abholbar", text: "Wenige Tage Fertigung. Abholung direkt im Studio." },
-              { icon: MapPin, title: "Lokal gefertigt", text: "Hier 3D-gedruckt – individuell für dich produziert." },
+              { icon: CreditCard, title: "Nie wieder lose Karte", text: "Schluss mit Suchen am Empfang. Karte sitzt fest im Halter." },
+              { icon: Tag, title: "Sofort dein Halter", text: "Dein Name groß und rot. Direkt erkennbar, wem die Karte gehört." },
+              { icon: ShieldCheck, title: "Telefonnummer bei Verlust", text: "Optional auf den Halter gedruckt – damit deine Karte schnell zurückfindet." },
+              { icon: Package, title: "Band für die Flasche", text: "Mit Band hängt der Halter direkt an deiner Trinkflasche – nie wieder vergessen." },
+              { icon: Clock, title: "In 1 Woche im Studio", text: "Wenige Tage Fertigung. Abholung direkt an der Theke deines Studios." },
+              { icon: MapPin, title: "Lokal gefertigt", text: "Hier 3D-gedruckt – individuell für dich produziert, nichts von der Stange." },
             ].map((b) => (
               <div
                 key={b.title}
@@ -502,30 +580,8 @@ function LandingPage() {
                 <div className="mb-4 grid h-10 w-10 place-items-center rounded-md bg-brand/15 text-brand">
                   <b.icon className="h-5 w-5" />
                 </div>
-                <h3 className="font-display text-lg font-bold">{b.title}</h3>
+                <h3 className="font-display text-lg font-black uppercase">{b.title}</h3>
                 <p className="mt-1.5 text-sm text-muted-foreground">{b.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="border-b border-border/60 py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-4">
-          <h2 className="mb-12 text-center font-display text-4xl font-bold md:text-5xl">
-            So funktioniert's
-          </h2>
-          <div className="grid gap-5 md:grid-cols-3">
-            {[
-              { n: "01", title: "Konfigurieren", text: "Farbe, Name, Band – in 60 Sekunden zusammengestellt." },
-              { n: "02", title: "Bestellung absenden", text: "Wir melden uns per WhatsApp mit allen Details." },
-              { n: "03", title: "Im Studio abholen", text: "Sobald fertig, holst du den Halter direkt im Studio ab." },
-            ].map((s) => (
-              <div key={s.n} className="rounded-xl border border-border bg-surface p-7">
-                <div className="font-display text-5xl font-bold text-brand">{s.n}</div>
-                <h3 className="mt-4 font-display text-xl font-bold">{s.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{s.text}</p>
               </div>
             ))}
           </div>
@@ -538,10 +594,10 @@ function LandingPage() {
         style={{ backgroundImage: "var(--gradient-hero)" }}
       >
         <div className="mx-auto max-w-3xl px-4 text-center">
-          <span className="inline-block rounded-full bg-brand px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-foreground">
+          <span className="inline-block rounded-sm bg-brand px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-brand-foreground">
             Testaktion
           </span>
-          <h2 className="mt-5 font-display text-5xl font-bold md:text-6xl">
+          <h2 className="mt-5 font-display text-5xl font-black uppercase md:text-6xl">
             Ab <span className="text-brand">7,90 €</span>
           </h2>
           <p className="mt-4 text-muted-foreground">
@@ -556,7 +612,7 @@ function LandingPage() {
           <Button
             onClick={scrollToConfig}
             size="lg"
-            className="mt-8 h-12 bg-brand px-8 text-base font-semibold text-brand-foreground hover:bg-brand/90"
+            className="mt-8 h-12 bg-brand px-8 text-base font-black uppercase tracking-wide text-brand-foreground hover:bg-brand/90"
           >
             Jetzt deinen konfigurieren
           </Button>
@@ -566,14 +622,14 @@ function LandingPage() {
       {/* FAQ */}
       <section className="border-b border-border/60 py-16 md:py-24">
         <div className="mx-auto max-w-3xl px-4">
-          <h2 className="mb-10 text-center font-display text-4xl font-bold md:text-5xl">
+          <h2 className="mb-10 text-center font-display text-4xl font-black uppercase md:text-5xl">
             Häufige Fragen
           </h2>
           <Accordion type="single" collapsible className="space-y-3">
             {[
               {
                 q: "Wie lange dauert die Fertigung?",
-                a: "In der Regel 2–4 Werktage. Wir melden uns per WhatsApp, sobald dein Halter zur Abholung bereit ist.",
+                a: "In der Regel innerhalb 1 Woche. Wir melden uns per WhatsApp, sobald dein Halter zur Abholung bereit ist.",
               },
               {
                 q: "Wie läuft die Abholung?",
@@ -581,7 +637,7 @@ function LandingPage() {
               },
               {
                 q: "Ist das Studio-Logo möglich?",
-                a: "Nur wenn dein Studio die Nutzung des Logos freigegeben hat. Frag im Zweifel kurz nach – wir klären das gerne.",
+                a: "Nur wenn dein Studio die Nutzung des Logos offiziell freigegeben hat. Ohne Freigabe drucken wir es nicht.",
               },
               {
                 q: "Muss ich direkt bezahlen?",
@@ -609,14 +665,38 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* WHATSAPP CTA BAR */}
+      <section className="bg-foreground py-8 text-background">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-full bg-brand text-brand-foreground">
+              <Phone className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wider opacity-70">WhatsApp</div>
+              <div className="font-display text-xl font-black">0176 42697714</div>
+            </div>
+          </div>
+          <Button
+            asChild
+            size="lg"
+            className="bg-brand text-brand-foreground hover:bg-brand/90"
+          >
+            <a href={whatsappFrage} target="_blank" rel="noreferrer">
+              Direkt fragen
+            </a>
+          </Button>
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer className="bg-surface/40 py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-sm text-muted-foreground sm:flex-row">
           <div className="flex items-center gap-2">
             <div className="grid h-7 w-7 place-items-center rounded-md bg-brand text-brand-foreground">
-              <CreditCard className="h-3.5 w-3.5" />
+              <Tag className="h-3.5 w-3.5" />
             </div>
-            <span className="font-display font-bold text-foreground">GymTag</span>
+            <span className="font-display font-black uppercase text-foreground">GymTag</span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-5">
             <a href={whatsappFrage} target="_blank" rel="noreferrer" className="hover:text-foreground">
@@ -640,7 +720,7 @@ function formatPrice(cents: number) {
 function ConfigCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-border bg-surface p-5">
-      <h3 className="mb-4 font-display text-base font-bold uppercase tracking-wider text-muted-foreground">
+      <h3 className="mb-4 font-display text-sm font-black uppercase tracking-[0.18em] text-muted-foreground">
         {title}
       </h3>
       <div className="space-y-4">{children}</div>
@@ -673,7 +753,7 @@ function ToggleRow({
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0 flex-1">
-        <div className="text-sm font-medium">{label}</div>
+        <div className="text-sm font-semibold">{label}</div>
         {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
       </div>
       <Switch checked={checked} onCheckedChange={onChange} className="mt-0.5 shrink-0" />
@@ -696,7 +776,7 @@ function ColorRow<T extends string>({
 }) {
   return (
     <div>
-      <div className="mb-2 text-sm font-medium">{label}</div>
+      <div className="mb-2 text-sm font-semibold">{label}</div>
       <div className="flex flex-wrap gap-2">
         {options.map((o) => {
           const active = o === value;
@@ -735,7 +815,7 @@ function PriceRow({ label, value, muted }: { label: string; value: string; muted
   );
 }
 
-/* ---------- live preview ---------- */
+/* ---------- live preview (looks like the real 3D-printed holder) ---------- */
 
 function HolderPreview({
   holderColor,
@@ -763,118 +843,214 @@ function HolderPreview({
   const bandHex = BAND_HEX[bandColor];
   const isLightHolder = holderColor === "Weiß";
 
+  // Build subtle 3D-print line texture
+  const textureLines = Array.from({ length: 40 }, (_, i) => 30 + i * 7);
+
+  const displayName = (name || "DEIN NAME").slice(0, 14);
+  const displayPhone = phone || "0170 1234567";
+
   return (
     <div className="relative mx-auto w-full max-w-sm">
-      <svg viewBox="0 0 320 200" className="w-full" aria-label="Vorschau Kartenhalter">
+      <svg
+        viewBox="0 0 360 280"
+        className="w-full drop-shadow-2xl"
+        aria-label="Vorschau Kartenhalter"
+      >
         <defs>
           <linearGradient id="holderShade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
-            <stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.16" />
+            <stop offset="55%" stopColor="#ffffff" stopOpacity="0.03" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
           </linearGradient>
+          <linearGradient id="textShade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
+          </linearGradient>
+          <filter id="raised" x="-10%" y="-10%" width="120%" height="120%">
+            <feGaussianBlur stdDeviation="0.6" />
+          </filter>
+          <clipPath id="cardClip">
+            <rect x="55" y="35" width="280" height="210" rx="18" />
+          </clipPath>
         </defs>
 
-        {/* band */}
+        {/* Band */}
         {withBand && (
-          <>
+          <g>
             <path
-              d="M 260 30 Q 305 50 290 100 Q 275 150 250 130"
+              d="M 40 60 Q 10 35 28 18 Q 48 4 60 28"
               stroke={bandHex}
-              strokeWidth="10"
+              strokeWidth="9"
               fill="none"
               strokeLinecap="round"
+              opacity="0.95"
             />
-            <circle cx="252" cy="42" r="6" fill="#888" />
-          </>
-        )}
-
-        {/* card body */}
-        <rect
-          x="20"
-          y="25"
-          width="240"
-          height="150"
-          rx="14"
-          fill={holderHex}
-          stroke={isLightHolder ? "#cccccc" : "#000000"}
-          strokeWidth="1"
-        />
-        <rect x="20" y="25" width="240" height="150" rx="14" fill="url(#holderShade)" />
-
-        {/* slot for card */}
-        <rect
-          x="34"
-          y="115"
-          width="212"
-          height="45"
-          rx="6"
-          fill="none"
-          stroke={isLightHolder ? "#999" : "#ffffff22"}
-          strokeWidth="1"
-          strokeDasharray="3 3"
-        />
-
-        {/* logo placeholder */}
-        {withLogo && (
-          <g transform="translate(36, 38)">
-            <circle cx="14" cy="14" r="14" fill={textHex} opacity="0.18" />
             <path
-              d="M 4 14 L 10 14 M 10 8 L 10 20 M 18 8 L 18 20 M 18 14 L 24 14"
-              stroke={textHex}
-              strokeWidth="2.5"
-              strokeLinecap="round"
+              d="M 40 60 Q 10 35 28 18 Q 48 4 60 28"
+              stroke="#000000"
+              strokeWidth="9"
               fill="none"
+              strokeLinecap="round"
+              opacity="0.15"
             />
           </g>
         )}
 
-        {/* name */}
-        {withName && (
-          <text
-            x={withLogo ? 80 : 36}
-            y="62"
-            fill={textHex}
-            fontFamily="Space Grotesk, sans-serif"
-            fontSize="26"
-            fontWeight="700"
-            letterSpacing="1"
-          >
-            {(name || "DEIN NAME").slice(0, 14)}
-          </text>
+        {/* Card body */}
+        <rect
+          x="55"
+          y="35"
+          width="280"
+          height="210"
+          rx="18"
+          fill={holderHex}
+          stroke={isLightHolder ? "#bdbdbd" : "#000000"}
+          strokeWidth="1.2"
+        />
+
+        {/* 3D print line texture inside the body */}
+        <g clipPath="url(#cardClip)" opacity={isLightHolder ? 0.08 : 0.18}>
+          {textureLines.map((y) => (
+            <line
+              key={y}
+              x1="55"
+              x2="335"
+              y1={y}
+              y2={y}
+              stroke={isLightHolder ? "#000000" : "#ffffff"}
+              strokeWidth="0.6"
+            />
+          ))}
+        </g>
+
+        {/* Shading overlay */}
+        <rect x="55" y="35" width="280" height="210" rx="18" fill="url(#holderShade)" />
+
+        {/* Eyelet ear on the left */}
+        <g>
+          <path
+            d="M 55 110 Q 35 110 30 125 Q 28 140 30 155 Q 35 170 55 170 Z"
+            fill={holderHex}
+            stroke={isLightHolder ? "#bdbdbd" : "#000000"}
+            strokeWidth="1.2"
+          />
+          <circle
+            cx="42"
+            cy="140"
+            r="8"
+            fill="#000000"
+            opacity="0.55"
+          />
+          <circle cx="42" cy="140" r="5.5" fill="#1a1a1a" />
+        </g>
+
+        {/* Card slot (subtle inner outline like the real opened holder) */}
+        <rect
+          x="70"
+          y="55"
+          width="250"
+          height="170"
+          rx="10"
+          fill="none"
+          stroke={isLightHolder ? "#999" : "#ffffff"}
+          strokeOpacity={isLightHolder ? 0.4 : 0.08}
+          strokeWidth="1"
+        />
+
+        {/* Logo (neutral GYM symbol) */}
+        {withLogo && (
+          <g transform="translate(78, 78)">
+            <rect
+              x="0"
+              y="0"
+              width="58"
+              height="28"
+              rx="6"
+              fill={textHex}
+              opacity="0.16"
+            />
+            <text
+              x="29"
+              y="20"
+              textAnchor="middle"
+              fill={textHex}
+              fontFamily="Space Grotesk, sans-serif"
+              fontWeight="900"
+              fontSize="16"
+              letterSpacing="2"
+            >
+              GYM
+            </text>
+          </g>
         )}
 
-        {/* phone */}
+        {/* NAME — large, raised, top */}
+        {withName && (
+          <g filter="url(#raised)">
+            <text
+              x="195"
+              y={withLogo ? 122 : 130}
+              textAnchor="middle"
+              fill={textHex}
+              fontFamily="Space Grotesk, sans-serif"
+              fontSize={displayName.length > 9 ? 32 : 40}
+              fontWeight="900"
+              letterSpacing="1.5"
+            >
+              {displayName}
+            </text>
+            {/* highlight stroke for raised look */}
+            <text
+              x="195"
+              y={withLogo ? 122 : 130}
+              textAnchor="middle"
+              fill="url(#textShade)"
+              fontFamily="Space Grotesk, sans-serif"
+              fontSize={displayName.length > 9 ? 32 : 40}
+              fontWeight="900"
+              letterSpacing="1.5"
+              opacity="0.5"
+            >
+              {displayName}
+            </text>
+          </g>
+        )}
+
+        {/* PHONE — bottom */}
         {withPhone && (
-          <text
-            x="36"
-            y="96"
-            fill={textHex}
-            opacity="0.85"
-            fontFamily="Inter, sans-serif"
-            fontSize="13"
-            fontWeight="500"
-          >
-            ☎ {phone || "Deine Nummer"}
-          </text>
+          <g filter="url(#raised)">
+            <text
+              x="195"
+              y={withName ? 195 : 150}
+              textAnchor="middle"
+              fill={textHex}
+              fontFamily="Space Grotesk, sans-serif"
+              fontSize="22"
+              fontWeight="800"
+              letterSpacing="1"
+            >
+              {displayPhone}
+            </text>
+          </g>
         )}
 
         {!withName && !withPhone && !withLogo && (
           <text
-            x="160"
-            y="78"
+            x="195"
+            y="145"
             textAnchor="middle"
             fill={textHex}
             opacity="0.5"
             fontFamily="Inter, sans-serif"
-            fontSize="12"
+            fontSize="13"
           >
             Aktiviere eine Option für die Vorschau
           </text>
         )}
       </svg>
 
-      <div className="mt-3 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-        <ChevronDown className="h-3 w-3" />
-        Live-Vorschau · aktualisiert sich automatisch
+      <div className="mt-3 text-center text-xs text-muted-foreground">
+        Live-Vorschau · echte 3D-Druck-Optik
       </div>
     </div>
   );
