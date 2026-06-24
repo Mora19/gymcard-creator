@@ -611,13 +611,13 @@ function LandingPage() {
             Testaktion
           </span>
           <h2 className="mt-5 font-display text-5xl font-black uppercase md:text-6xl">
-            Ab <span className="text-brand">7,90 €</span>
+            Ab <span className="text-brand">9,90 €</span>
           </h2>
           <p className="mt-4 text-muted-foreground">
             Basis-Halter mit Name in deiner Wunschfarbe. Erweiterbar – ganz nach dir.
           </p>
           <div className="mx-auto mt-8 max-w-md space-y-2 rounded-xl border border-border bg-surface p-6 text-left text-sm">
-            <PriceRow label="Basis-Halter (personalisiert)" value="7,90 €" />
+            <PriceRow label="Basis-Halter (personalisiert)" value="9,90 €" />
             <PriceRow label="Band für die Flasche" value="+1,00 €" />
             <PriceRow label="Telefonnummer auf Halter" value="+1,00 €" />
             <PriceRow label="Weitere Extras auf Anfrage" value="—" muted />
