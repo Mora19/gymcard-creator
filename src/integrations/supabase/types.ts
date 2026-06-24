@@ -14,7 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          band_color: string | null
+          contact_email: string | null
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          holder_color: string
+          holder_name: string | null
+          holder_phone: string | null
+          id: string
+          name_on_holder: boolean
+          note: string | null
+          phone_on_holder: boolean
+          price_cents: number
+          studio: string
+          text_color: string
+          with_band: boolean
+          with_logo: boolean
+        }
+        Insert: {
+          band_color?: string | null
+          contact_email?: string | null
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          holder_color: string
+          holder_name?: string | null
+          holder_phone?: string | null
+          id?: string
+          name_on_holder?: boolean
+          note?: string | null
+          phone_on_holder?: boolean
+          price_cents: number
+          studio: string
+          text_color: string
+          with_band?: boolean
+          with_logo?: boolean
+        }
+        Update: {
+          band_color?: string | null
+          contact_email?: string | null
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          holder_color?: string
+          holder_name?: string | null
+          holder_phone?: string | null
+          id?: string
+          name_on_holder?: boolean
+          note?: string | null
+          phone_on_holder?: boolean
+          price_cents?: number
+          studio?: string
+          text_color?: string
+          with_band?: boolean
+          with_logo?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
