@@ -28,8 +28,8 @@ import {
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import productFront from "@/assets/product-front.png.asset.json";
-import productOpen from "@/assets/product-open.png.asset.json";
+import productFront from "@/assets/gymtag-front-clean.png.asset.json";
+import productOpen from "@/assets/gymtag-open-clean.png.asset.json";
 import { submitOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/")({
