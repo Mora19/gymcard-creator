@@ -28,8 +28,8 @@ import {
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import productFront from "@/assets/product-front.png.asset.json";
-import productOpen from "@/assets/product-open.png.asset.json";
+import productFront from "@/assets/gymtag-front-clean.png.asset.json";
+import productOpen from "@/assets/gymtag-open-clean.png.asset.json";
 import { submitOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/")({
@@ -1031,30 +1031,18 @@ function HolderPreview({
                 F
               </text>
             </g>
-            {/* Fitness First wordmark */}
+            {/* Fitness First wordmark — single line, like the real card */}
             <text
               x={X_LEFT + 50}
-              y={Y_LOGO - 8}
+              y={Y_LOGO + 4}
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize="16"
+              fontSize="22"
               fontWeight="800"
               fontStyle="italic"
-              letterSpacing="0.5"
+              letterSpacing="0.4"
             >
-              Fitness
-            </text>
-            <text
-              x={X_LEFT + 50}
-              y={Y_LOGO + 10}
-              fill={textHex}
-              fontFamily="Space Grotesk, sans-serif"
-              fontSize="16"
-              fontWeight="800"
-              fontStyle="italic"
-              letterSpacing="0.5"
-            >
-              First
+              Fitness First
             </text>
           </g>
         )}
