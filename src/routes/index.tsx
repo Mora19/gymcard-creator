@@ -268,7 +268,7 @@ function LandingPage() {
 
           <div className="relative">
             <div
-              className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black p-6 sm:p-8"
+              className="relative overflow-hidden rounded-2xl border border-border/80 bg-[#0b0b0d] p-6 sm:p-8"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <img
@@ -278,16 +278,21 @@ function LandingPage() {
                 height={960}
                 className="mx-auto block w-full max-w-[420px] object-contain drop-shadow-[0_20px_40px_rgba(230,57,70,0.25)]"
               />
-              <div className="pointer-events-none absolute -bottom-4 right-3 w-32 rotate-6 rounded-xl border border-border/60 bg-background/90 p-2 shadow-2xl sm:w-40">
+              <div className="mt-4 flex items-center gap-3 rounded-xl border border-border/60 bg-[#111114] p-3">
                 <img
                   src={productOpen.url}
                   alt="Geöffneter Kartenhalter mit eingesteckter roter Mitgliedskarte"
                   width={640}
                   height={320}
-                  className="block w-full rounded-md object-contain"
+                  className="block h-20 w-auto shrink-0 rounded-md object-contain sm:h-24"
                 />
-                <div className="mt-1 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Karte rein · fertig
+                <div className="min-w-0">
+                  <div className="text-xs font-bold uppercase tracking-wider text-brand">
+                    Karte rein · fertig
+                  </div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">
+                    Karte einfach von oben einschieben – sitzt fest, bleibt sichtbar.
+                  </div>
                 </div>
               </div>
             </div>
@@ -296,6 +301,7 @@ function LandingPage() {
               style={{ background: "radial-gradient(circle, oklch(0.62 0.24 25 / 0.4), transparent 70%)" }}
             />
           </div>
+
         </div>
       </section>
 
