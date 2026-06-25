@@ -407,7 +407,7 @@ function LandingPage() {
                 )}
                 <ToggleRow
                   label="Studio-Logo"
-                  hint="Studio-Logo nur mit offizieller Freigabe möglich. Vorschau zeigt neutrales „GYM“."
+                  hint="Studio-Logo nur mit offizieller Freigabe möglich (z. B. Fitness First)."
                   checked={withLogo}
                   onChange={setWithLogo}
                 />
