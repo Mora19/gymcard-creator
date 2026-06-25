@@ -112,6 +112,17 @@ function LandingPage() {
     return p;
   }, [withBand, withPhoneOnHolder]);
 
+  // Prevent identical holder + text color (no contrast)
+  const conflictsWithHolder = (t: TextColor) => t === (holderColor as string);
+  useEffect(() => {
+    if (conflictsWithHolder(textColor)) {
+      const fallback = TEXT_COLORS.find((c) => !conflictsWithHolder(c));
+      if (fallback) setTextColor(fallback);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [holderColor]);
+
+
   const submit = useServerFn(submitOrder);
 
   async function handleSubmit(e: React.FormEvent) {
