@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   CreditCard,
@@ -111,6 +111,17 @@ function LandingPage() {
     if (withPhoneOnHolder) p += PHONE_PRICE;
     return p;
   }, [withBand, withPhoneOnHolder]);
+
+  // Prevent identical holder + text color (no contrast)
+  const conflictsWithHolder = (t: TextColor) => t === (holderColor as string);
+  useEffect(() => {
+    if (conflictsWithHolder(textColor)) {
+      const fallback = TEXT_COLORS.find((c) => !conflictsWithHolder(c));
+      if (fallback) setTextColor(fallback);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [holderColor]);
+
 
   const submit = useServerFn(submitOrder);
 
@@ -268,7 +279,7 @@ function LandingPage() {
 
           <div className="relative">
             <div
-              className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black p-6 sm:p-8"
+              className="relative overflow-hidden rounded-2xl border border-border/80 bg-[#0b0b0d] p-6 sm:p-8"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <img
@@ -278,16 +289,21 @@ function LandingPage() {
                 height={960}
                 className="mx-auto block w-full max-w-[420px] object-contain drop-shadow-[0_20px_40px_rgba(230,57,70,0.25)]"
               />
-              <div className="pointer-events-none absolute -bottom-4 right-3 w-32 rotate-6 rounded-xl border border-border/60 bg-background/90 p-2 shadow-2xl sm:w-40">
+              <div className="mt-4 flex items-center gap-3 rounded-xl border border-border/60 bg-[#111114] p-3">
                 <img
                   src={productOpen.url}
                   alt="Geöffneter Kartenhalter mit eingesteckter roter Mitgliedskarte"
                   width={640}
                   height={320}
-                  className="block w-full rounded-md object-contain"
+                  className="block h-20 w-auto shrink-0 rounded-md object-contain sm:h-24"
                 />
-                <div className="mt-1 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Karte rein · fertig
+                <div className="min-w-0">
+                  <div className="text-xs font-bold uppercase tracking-wider text-brand">
+                    Karte rein · fertig
+                  </div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">
+                    Karte einfach von oben einschieben – sitzt fest, bleibt sichtbar.
+                  </div>
                 </div>
               </div>
             </div>
@@ -296,6 +312,7 @@ function LandingPage() {
               style={{ background: "radial-gradient(circle, oklch(0.62 0.24 25 / 0.4), transparent 70%)" }}
             />
           </div>
+
         </div>
       </section>
 
@@ -366,13 +383,14 @@ function LandingPage() {
                 />
                 {withName && (
                   <Input
-                    placeholder="z. B. MORITZ"
+                    placeholder="z. B. MORITZ KLÖSTERS"
                     value={name}
-                    onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 14))}
-                    maxLength={14}
+                    onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 22))}
+                    maxLength={22}
                     className="bg-background"
                   />
                 )}
+
                 <ToggleRow
                   label="Telefonnummer auf dem Halter"
                   hint="+1 € · Damit deine Karte bei Verlust leichter zurückkommt."
@@ -389,7 +407,7 @@ function LandingPage() {
                 )}
                 <ToggleRow
                   label="Studio-Logo"
-                  hint="Studio-Logo nur mit offizieller Freigabe möglich. Vorschau zeigt neutrales „GYM“."
+                  hint="Studio-Logo nur mit offizieller Freigabe möglich (z. B. Fitness First)."
                   checked={withLogo}
                   onChange={setWithLogo}
                 />
@@ -409,7 +427,10 @@ function LandingPage() {
                   value={textColor}
                   onChange={setTextColor}
                   hexMap={TEXT_HEX}
+                  disabledOptions={TEXT_COLORS.filter(conflictsWithHolder)}
+                  disabledHint="Gleiche Farbe wie der Halter – kein Kontrast."
                 />
+
               </ConfigCard>
 
               <ConfigCard title="Band für die Flasche">
@@ -780,28 +801,38 @@ function ColorRow<T extends string>({
   value,
   onChange,
   hexMap,
+  disabledOptions,
+  disabledHint,
 }: {
   label: string;
   options: readonly T[];
   value: T;
   onChange: (v: T) => void;
   hexMap: Record<T, string>;
+  disabledOptions?: readonly T[];
+  disabledHint?: string;
 }) {
+  const isDisabled = (o: T) => disabledOptions?.includes(o) ?? false;
   return (
     <div>
       <div className="mb-2 text-sm font-semibold">{label}</div>
       <div className="flex flex-wrap gap-2">
         {options.map((o) => {
           const active = o === value;
+          const disabled = isDisabled(o);
           return (
             <button
               key={o}
               type="button"
-              onClick={() => onChange(o)}
+              disabled={disabled}
+              title={disabled ? disabledHint : undefined}
+              onClick={() => !disabled && onChange(o)}
               className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                active
-                  ? "border-brand bg-brand/15 text-foreground"
-                  : "border-border bg-background text-muted-foreground hover:border-brand/40"
+                disabled
+                  ? "cursor-not-allowed border-dashed border-border/60 bg-background/40 text-muted-foreground/40 line-through"
+                  : active
+                    ? "border-brand bg-brand/15 text-foreground"
+                    : "border-border bg-background text-muted-foreground hover:border-brand/40"
               }`}
             >
               <span
@@ -813,9 +844,13 @@ function ColorRow<T extends string>({
           );
         })}
       </div>
+      {disabledOptions && disabledOptions.length > 0 && disabledHint && (
+        <p className="mt-2 text-xs text-muted-foreground">{disabledHint}</p>
+      )}
     </div>
   );
 }
+
 
 function PriceRow({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
   return (
@@ -859,13 +894,21 @@ function HolderPreview({
   // 3D-print line texture
   const textureLines = Array.from({ length: 46 }, (_, i) => 28 + i * 6);
 
-  const displayName = (name || "Dein Name").slice(0, 18);
+  const displayName = (name || "Dein Name").slice(0, 22);
   const displayPhone = phone || "0170 1234567";
 
-  // Fixed zones (vertical centers, in viewBox 360x300)
-  const Y_NAME = 88;
-  const Y_LOGO = 158;
-  const Y_PHONE = 238;
+  // Card body: x=58, w=278 → interior 58..336. Left text baseline:
+  const X_LEFT = 86;
+
+  // Fixed zone Y positions (text baselines, viewBox 360x300)
+  const Y_NAME = 92;
+  const Y_LOGO = 168;
+  const Y_PHONE = 240;
+
+  // Dynamic name sizing: 30 (short) → 16 (max length)
+  const nameLen = displayName.length;
+  const nameFontSize = Math.max(16, Math.min(30, 32 - Math.max(0, nameLen - 8) * 1.05));
+  const phoneFontSize = displayPhone.length > 14 ? 18 : 21;
 
   return (
     <div className="relative mx-auto w-full max-w-sm">
@@ -952,70 +995,82 @@ function HolderPreview({
         {/* Shading */}
         <rect x="58" y="30" width="278" height="240" rx="20" fill="url(#holderShade)" />
 
-        {/* ZONE 1 — NAME (top) */}
+        {/* ZONE 1 — NAME (top, left-aligned) */}
         {withName && (
           <g filter="url(#raised)">
             <text
-              x="197"
+              x={X_LEFT}
               y={Y_NAME}
-              textAnchor="middle"
+              textAnchor="start"
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize={displayName.length > 12 ? 22 : 26}
+              fontSize={nameFontSize}
               fontWeight="800"
-              letterSpacing="0.3"
+              letterSpacing="0.4"
             >
               {displayName}
             </text>
           </g>
         )}
 
-        {/* ZONE 2 — LOGO row (middle): big F + studio line */}
+        {/* ZONE 2 — LOGO row (middle, left-aligned): F block + "Fitness First" */}
         {withLogo && (
           <g filter="url(#raised)">
-            {/* Big F block */}
-            <g transform="translate(95, 132)">
-              <rect x="0" y="0" width="42" height="48" rx="3" fill={textHex} />
+            {/* F block */}
+            <g transform={`translate(${X_LEFT}, ${Y_LOGO - 32})`}>
+              <rect x="0" y="0" width="40" height="44" rx="3" fill={textHex} />
               <text
-                x="21"
-                y="38"
+                x="20"
+                y="35"
                 textAnchor="middle"
                 fill={holderHex}
                 fontFamily="Space Grotesk, sans-serif"
-                fontSize="40"
+                fontSize="36"
                 fontWeight="900"
               >
                 F
               </text>
             </g>
-            {/* Studio line */}
+            {/* Fitness First wordmark */}
             <text
-              x="150"
-              y={Y_LOGO + 10}
+              x={X_LEFT + 50}
+              y={Y_LOGO - 8}
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize="26"
+              fontSize="16"
               fontWeight="800"
               fontStyle="italic"
               letterSpacing="0.5"
             >
-              Studio Logo
+              Fitness
+            </text>
+            <text
+              x={X_LEFT + 50}
+              y={Y_LOGO + 10}
+              fill={textHex}
+              fontFamily="Space Grotesk, sans-serif"
+              fontSize="16"
+              fontWeight="800"
+              fontStyle="italic"
+              letterSpacing="0.5"
+            >
+              First
             </text>
           </g>
         )}
 
-        {/* ZONE 3 — PHONE (bottom) */}
+        {/* ZONE 3 — PHONE (bottom, left-aligned) */}
         {withPhone && (
           <g filter="url(#raised)">
             <text
-              x="197"
+              x={X_LEFT}
               y={Y_PHONE}
-              textAnchor="middle"
+              textAnchor="start"
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize="22"
+              fontSize={phoneFontSize}
               fontWeight="800"
-              letterSpacing="1"
+              letterSpacing="0.8"
             >
               {displayPhone}
             </text>
@@ -1036,6 +1091,8 @@ function HolderPreview({
           </text>
         )}
       </svg>
+
+
 
       <div className="mt-3 space-y-1 text-center">
         <div className="text-xs text-muted-foreground">
