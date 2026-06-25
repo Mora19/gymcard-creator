@@ -894,13 +894,21 @@ function HolderPreview({
   // 3D-print line texture
   const textureLines = Array.from({ length: 46 }, (_, i) => 28 + i * 6);
 
-  const displayName = (name || "Dein Name").slice(0, 18);
+  const displayName = (name || "Dein Name").slice(0, 22);
   const displayPhone = phone || "0170 1234567";
 
-  // Fixed zones (vertical centers, in viewBox 360x300)
-  const Y_NAME = 88;
-  const Y_LOGO = 158;
-  const Y_PHONE = 238;
+  // Card body: x=58, w=278 → interior 58..336. Left text baseline:
+  const X_LEFT = 86;
+
+  // Fixed zone Y positions (text baselines, viewBox 360x300)
+  const Y_NAME = 92;
+  const Y_LOGO = 168;
+  const Y_PHONE = 240;
+
+  // Dynamic name sizing: 30 (short) → 16 (max length)
+  const nameLen = displayName.length;
+  const nameFontSize = Math.max(16, Math.min(30, 32 - Math.max(0, nameLen - 8) * 1.05));
+  const phoneFontSize = displayPhone.length > 14 ? 18 : 21;
 
   return (
     <div className="relative mx-auto w-full max-w-sm">
@@ -987,70 +995,82 @@ function HolderPreview({
         {/* Shading */}
         <rect x="58" y="30" width="278" height="240" rx="20" fill="url(#holderShade)" />
 
-        {/* ZONE 1 — NAME (top) */}
+        {/* ZONE 1 — NAME (top, left-aligned) */}
         {withName && (
           <g filter="url(#raised)">
             <text
-              x="197"
+              x={X_LEFT}
               y={Y_NAME}
-              textAnchor="middle"
+              textAnchor="start"
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize={displayName.length > 12 ? 22 : 26}
+              fontSize={nameFontSize}
               fontWeight="800"
-              letterSpacing="0.3"
+              letterSpacing="0.4"
             >
               {displayName}
             </text>
           </g>
         )}
 
-        {/* ZONE 2 — LOGO row (middle): big F + studio line */}
+        {/* ZONE 2 — LOGO row (middle, left-aligned): F block + "Fitness First" */}
         {withLogo && (
           <g filter="url(#raised)">
-            {/* Big F block */}
-            <g transform="translate(95, 132)">
-              <rect x="0" y="0" width="42" height="48" rx="3" fill={textHex} />
+            {/* F block */}
+            <g transform={`translate(${X_LEFT}, ${Y_LOGO - 32})`}>
+              <rect x="0" y="0" width="40" height="44" rx="3" fill={textHex} />
               <text
-                x="21"
-                y="38"
+                x="20"
+                y="35"
                 textAnchor="middle"
                 fill={holderHex}
                 fontFamily="Space Grotesk, sans-serif"
-                fontSize="40"
+                fontSize="36"
                 fontWeight="900"
               >
                 F
               </text>
             </g>
-            {/* Studio line */}
+            {/* Fitness First wordmark */}
             <text
-              x="150"
-              y={Y_LOGO + 10}
+              x={X_LEFT + 50}
+              y={Y_LOGO - 8}
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize="26"
+              fontSize="16"
               fontWeight="800"
               fontStyle="italic"
               letterSpacing="0.5"
             >
-              Studio Logo
+              Fitness
+            </text>
+            <text
+              x={X_LEFT + 50}
+              y={Y_LOGO + 10}
+              fill={textHex}
+              fontFamily="Space Grotesk, sans-serif"
+              fontSize="16"
+              fontWeight="800"
+              fontStyle="italic"
+              letterSpacing="0.5"
+            >
+              First
             </text>
           </g>
         )}
 
-        {/* ZONE 3 — PHONE (bottom) */}
+        {/* ZONE 3 — PHONE (bottom, left-aligned) */}
         {withPhone && (
           <g filter="url(#raised)">
             <text
-              x="197"
+              x={X_LEFT}
               y={Y_PHONE}
-              textAnchor="middle"
+              textAnchor="start"
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize="22"
+              fontSize={phoneFontSize}
               fontWeight="800"
-              letterSpacing="1"
+              letterSpacing="0.8"
             >
               {displayPhone}
             </text>
@@ -1071,6 +1091,8 @@ function HolderPreview({
           </text>
         )}
       </svg>
+
+
 
       <div className="mt-3 space-y-1 text-center">
         <div className="text-xs text-muted-foreground">
