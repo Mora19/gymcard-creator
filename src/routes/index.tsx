@@ -801,28 +801,38 @@ function ColorRow<T extends string>({
   value,
   onChange,
   hexMap,
+  disabledOptions,
+  disabledHint,
 }: {
   label: string;
   options: readonly T[];
   value: T;
   onChange: (v: T) => void;
   hexMap: Record<T, string>;
+  disabledOptions?: readonly T[];
+  disabledHint?: string;
 }) {
+  const isDisabled = (o: T) => disabledOptions?.includes(o) ?? false;
   return (
     <div>
       <div className="mb-2 text-sm font-semibold">{label}</div>
       <div className="flex flex-wrap gap-2">
         {options.map((o) => {
           const active = o === value;
+          const disabled = isDisabled(o);
           return (
             <button
               key={o}
               type="button"
-              onClick={() => onChange(o)}
+              disabled={disabled}
+              title={disabled ? disabledHint : undefined}
+              onClick={() => !disabled && onChange(o)}
               className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                active
-                  ? "border-brand bg-brand/15 text-foreground"
-                  : "border-border bg-background text-muted-foreground hover:border-brand/40"
+                disabled
+                  ? "cursor-not-allowed border-dashed border-border/60 bg-background/40 text-muted-foreground/40 line-through"
+                  : active
+                    ? "border-brand bg-brand/15 text-foreground"
+                    : "border-border bg-background text-muted-foreground hover:border-brand/40"
               }`}
             >
               <span
@@ -834,9 +844,13 @@ function ColorRow<T extends string>({
           );
         })}
       </div>
+      {disabledOptions && disabledOptions.length > 0 && disabledHint && (
+        <p className="mt-2 text-xs text-muted-foreground">{disabledHint}</p>
+      )}
     </div>
   );
 }
+
 
 function PriceRow({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
   return (
