@@ -427,7 +427,10 @@ function LandingPage() {
                   value={textColor}
                   onChange={setTextColor}
                   hexMap={TEXT_HEX}
+                  disabledOptions={TEXT_COLORS.filter(conflictsWithHolder)}
+                  disabledHint="Gleiche Farbe wie der Halter – kein Kontrast."
                 />
+
               </ConfigCard>
 
               <ConfigCard title="Band für die Flasche">
