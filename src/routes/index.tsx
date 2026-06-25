@@ -1031,30 +1031,18 @@ function HolderPreview({
                 F
               </text>
             </g>
-            {/* Fitness First wordmark */}
+            {/* Fitness First wordmark — single line, like the real card */}
             <text
               x={X_LEFT + 50}
-              y={Y_LOGO - 8}
+              y={Y_LOGO + 4}
               fill={textHex}
               fontFamily="Space Grotesk, sans-serif"
-              fontSize="16"
+              fontSize="22"
               fontWeight="800"
               fontStyle="italic"
-              letterSpacing="0.5"
+              letterSpacing="0.4"
             >
-              Fitness
-            </text>
-            <text
-              x={X_LEFT + 50}
-              y={Y_LOGO + 10}
-              fill={textHex}
-              fontFamily="Space Grotesk, sans-serif"
-              fontSize="16"
-              fontWeight="800"
-              fontStyle="italic"
-              letterSpacing="0.5"
-            >
-              First
+              Fitness First
             </text>
           </g>
         )}
