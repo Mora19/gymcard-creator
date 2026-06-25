@@ -372,13 +372,14 @@ function LandingPage() {
                 />
                 {withName && (
                   <Input
-                    placeholder="z. B. MORITZ"
+                    placeholder="z. B. MORITZ KLÖSTERS"
                     value={name}
-                    onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 14))}
-                    maxLength={14}
+                    onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 22))}
+                    maxLength={22}
                     className="bg-background"
                   />
                 )}
+
                 <ToggleRow
                   label="Telefonnummer auf dem Halter"
                   hint="+1 € · Damit deine Karte bei Verlust leichter zurückkommt."
