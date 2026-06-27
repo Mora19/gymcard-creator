@@ -79,9 +79,10 @@ const BAND_HEX: Record<BandColor, string> = {
   Weiß: "#f5f5f5",
 };
 
-const BASE_PRICE = 990; // cents
+const BASE_PRICE = 799; // cents – 7,99 €
 const BAND_PRICE = 100;
-const PHONE_PRICE = 100;
+const PHONE_PRICE = 0;
+const LOGO_PRICE = 0;
 
 function LandingPage() {
   // Configurator state
@@ -99,18 +100,21 @@ function LandingPage() {
   const [contactName, setContactName] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [contactEmail, setContactEmail] = useState("");
-  const [studio, setStudio] = useState("");
+  const [pickupLocation, setPickupLocation] = useState("");
+  const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState<{ whatsappUrl: string } | null>(null);
+  const [submitted, setSubmitted] = useState<{ whatsappUrl: string; orderNumber?: string | null } | null>(null);
 
-  const priceCents = useMemo(() => {
+  const unitPriceCents = useMemo(() => {
     let p = BASE_PRICE;
     if (withBand) p += BAND_PRICE;
     if (withPhoneOnHolder) p += PHONE_PRICE;
+    if (withLogo) p += LOGO_PRICE;
     return p;
-  }, [withBand, withPhoneOnHolder]);
+  }, [withBand, withPhoneOnHolder, withLogo]);
+  const priceCents = unitPriceCents * quantity;
 
   // Prevent identical holder + text color (no contrast)
   const conflictsWithHolder = (t: TextColor) => t === (holderColor as string);
@@ -131,18 +135,18 @@ function LandingPage() {
       toast.error("Bitte stimme den Datenschutzbestimmungen zu.");
       return;
     }
-    if (!contactName || !contactPhone || !studio) {
-      toast.error("Bitte fülle Name, WhatsApp-Nummer und Studio aus.");
+    if (!contactName || !contactPhone || !pickupLocation) {
+      toast.error("Bitte fülle Name, WhatsApp-Nummer und Abholort aus.");
       return;
     }
     setSubmitting(true);
     try {
-      await submit({
+      const res = await submit({
         data: {
           contact_name: contactName,
           contact_phone: contactPhone,
           contact_email: contactEmail || "",
-          studio,
+          pickup_location: pickupLocation,
           note,
           holder_color: holderColor,
           text_color: textColor,
@@ -153,27 +157,30 @@ function LandingPage() {
           with_logo: withLogo,
           with_band: withBand,
           band_color: withBand ? bandColor : "",
-          price_cents: priceCents,
+          quantity,
+          price_cents: unitPriceCents,
         },
       });
 
       const summary = [
         "*Neue Bestellung Kartenhalter*",
+        res?.order_number ? `Bestell-Nr: ${res.order_number}` : null,
         `Name: ${contactName}`,
         `WhatsApp: ${contactPhone}`,
-        `Studio: ${studio}`,
+        `Abholort: ${pickupLocation}`,
+        `Stückzahl: ${quantity}`,
         `Halter: ${holderColor}, Text: ${textColor}`,
         withName ? `Name auf Halter: ${name}` : "Ohne Name",
         withPhoneOnHolder ? `Tel auf Halter: ${phoneOnHolder}` : null,
         withLogo ? "Mit Studio-Logo (sofern freigegeben)" : null,
         withBand ? `Band: ${bandColor}` : "Ohne Band",
-        `Preis: ${formatPrice(priceCents)}`,
+        `Gesamtpreis: ${formatPrice(priceCents)}`,
         note ? `Notiz: ${note}` : null,
       ]
         .filter(Boolean)
         .join("\n");
       const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
-      setSubmitted({ whatsappUrl });
+      setSubmitted({ whatsappUrl, orderNumber: res?.order_number ?? null });
       toast.success("Bestellung gesendet! Wir melden uns kurz per WhatsApp.");
       if (typeof window !== "undefined") {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -393,7 +400,7 @@ function LandingPage() {
 
                 <ToggleRow
                   label="Telefonnummer auf dem Halter"
-                  hint="+1 € · Damit deine Karte bei Verlust leichter zurückkommt."
+                  hint="Damit deine Karte bei Verlust leichter zurückkommt."
                   checked={withPhoneOnHolder}
                   onChange={setWithPhoneOnHolder}
                 />
@@ -482,15 +489,50 @@ function LandingPage() {
                       className="bg-background"
                     />
                   </Field>
-                  <Field label="Studio / Abholort *">
+                  <Field label="Abholort / Studio *">
                     <Input
                       required
-                      placeholder="z. B. Fitness First Musterstraße"
-                      value={studio}
-                      onChange={(e) => setStudio(e.target.value)}
+                      placeholder="z. B. Heilbronn, Bad Rappenau, Fitness First Musterstr."
+                      value={pickupLocation}
+                      onChange={(e) => setPickupLocation(e.target.value)}
                       maxLength={120}
                       className="bg-background"
                     />
+                  </Field>
+                  <Field label="Stückzahl *">
+                    <div className="flex items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        aria-label="Weniger"
+                      >
+                        −
+                      </Button>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={99}
+                        value={quantity}
+                        onChange={(e) =>
+                          setQuantity(Math.max(1, Math.min(99, Number(e.target.value) || 1)))
+                        }
+                        className="w-20 bg-background text-center"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setQuantity((q) => Math.min(99, q + 1))}
+                        aria-label="Mehr"
+                      >
+                        +
+                      </Button>
+                      <span className="text-xs text-muted-foreground">
+                        {formatPrice(unitPriceCents)} / Stück
+                      </span>
+                    </div>
                   </Field>
                   <Field label="Anmerkung (optional)">
                     <Textarea
@@ -501,6 +543,9 @@ function LandingPage() {
                       className="bg-background"
                     />
                   </Field>
+                  <p className="text-xs text-muted-foreground">
+                    Deine Angaben werden nur zur Bearbeitung deiner Bestellung verwendet.
+                  </p>
                   <label className="flex items-start gap-3 rounded-md border border-border bg-background p-3 text-sm">
                     <Checkbox
                       checked={agreed}
@@ -521,10 +566,20 @@ function LandingPage() {
                   <h3 className="font-display text-2xl font-black uppercase">
                     Bestellung erhalten!
                   </h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Wir melden uns kurz per WhatsApp und geben dir Bescheid,
-                    sobald dein Halter zur Abholung im Studio bereit ist
-                    (in der Regel innerhalb einer Woche).
+                  {submitted.orderNumber && (
+                    <p className="mt-1 font-mono text-sm text-brand">{submitted.orderNumber}</p>
+                  )}
+                  <div className="mx-auto mt-4 max-w-sm space-y-1 rounded-md border border-border bg-background/40 p-4 text-left text-sm">
+                    <SummaryRow k="Name" v={contactName} />
+                    <SummaryRow k="Telefon" v={contactPhone} />
+                    <SummaryRow k="Halterfarbe" v={holderColor} />
+                    <SummaryRow k="Textfarbe" v={textColor} />
+                    <SummaryRow k="Band" v={withBand ? `ja · ${bandColor}` : "nein"} />
+                    <SummaryRow k="Stückzahl" v={String(quantity)} />
+                    <SummaryRow k="Gesamtpreis" v={formatPrice(priceCents)} bold />
+                  </div>
+                  <p className="mt-4 text-sm text-muted-foreground">
+                    Die Bestellung wird von Moritz geprüft und anschließend produziert.
                   </p>
                   <Button
                     asChild
@@ -632,15 +687,16 @@ function LandingPage() {
             Testaktion
           </span>
           <h2 className="mt-5 font-display text-5xl font-black uppercase md:text-6xl">
-            Ab <span className="text-brand">9,90 €</span>
+            Ab <span className="text-brand">7,99 €</span>
           </h2>
           <p className="mt-4 text-muted-foreground">
             Basis-Halter mit Name in deiner Wunschfarbe. Erweiterbar – ganz nach dir.
           </p>
           <div className="mx-auto mt-8 max-w-md space-y-2 rounded-xl border border-border bg-surface p-6 text-left text-sm">
-            <PriceRow label="Basis-Halter (personalisiert)" value="9,90 €" />
+            <PriceRow label="Basis-Halter (personalisiert)" value="7,99 €" />
             <PriceRow label="Band für die Flasche" value="+1,00 €" />
-            <PriceRow label="Telefonnummer auf Halter" value="+1,00 €" />
+            <PriceRow label="Telefonnummer auf Halter" value="inklusive" />
+            <PriceRow label="Studio-Logo (mit Freigabe)" value="inklusive" />
             <PriceRow label="Weitere Extras auf Anfrage" value="—" muted />
           </div>
           <Button
@@ -859,6 +915,15 @@ function PriceRow({ label, value, muted }: { label: string; value: string; muted
       <span className={`font-semibold ${muted ? "text-muted-foreground" : "text-foreground"}`}>
         {value}
       </span>
+    </div>
+  );
+}
+
+function SummaryRow({ k, v, bold }: { k: string; v: string; bold?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-xs uppercase tracking-wider text-muted-foreground">{k}</span>
+      <span className={bold ? "font-bold text-brand" : "font-medium"}>{v}</span>
     </div>
   );
 }
