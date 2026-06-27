@@ -135,18 +135,18 @@ function LandingPage() {
       toast.error("Bitte stimme den Datenschutzbestimmungen zu.");
       return;
     }
-    if (!contactName || !contactPhone || !studio) {
-      toast.error("Bitte fülle Name, WhatsApp-Nummer und Studio aus.");
+    if (!contactName || !contactPhone || !pickupLocation) {
+      toast.error("Bitte fülle Name, WhatsApp-Nummer und Abholort aus.");
       return;
     }
     setSubmitting(true);
     try {
-      await submit({
+      const res = await submit({
         data: {
           contact_name: contactName,
           contact_phone: contactPhone,
           contact_email: contactEmail || "",
-          studio,
+          pickup_location: pickupLocation,
           note,
           holder_color: holderColor,
           text_color: textColor,
@@ -157,27 +157,30 @@ function LandingPage() {
           with_logo: withLogo,
           with_band: withBand,
           band_color: withBand ? bandColor : "",
-          price_cents: priceCents,
+          quantity,
+          price_cents: unitPriceCents,
         },
       });
 
       const summary = [
         "*Neue Bestellung Kartenhalter*",
+        res?.order_number ? `Bestell-Nr: ${res.order_number}` : null,
         `Name: ${contactName}`,
         `WhatsApp: ${contactPhone}`,
-        `Studio: ${studio}`,
+        `Abholort: ${pickupLocation}`,
+        `Stückzahl: ${quantity}`,
         `Halter: ${holderColor}, Text: ${textColor}`,
         withName ? `Name auf Halter: ${name}` : "Ohne Name",
         withPhoneOnHolder ? `Tel auf Halter: ${phoneOnHolder}` : null,
         withLogo ? "Mit Studio-Logo (sofern freigegeben)" : null,
         withBand ? `Band: ${bandColor}` : "Ohne Band",
-        `Preis: ${formatPrice(priceCents)}`,
+        `Gesamtpreis: ${formatPrice(priceCents)}`,
         note ? `Notiz: ${note}` : null,
       ]
         .filter(Boolean)
         .join("\n");
       const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
-      setSubmitted({ whatsappUrl });
+      setSubmitted({ whatsappUrl, orderNumber: res?.order_number ?? null });
       toast.success("Bestellung gesendet! Wir melden uns kurz per WhatsApp.");
       if (typeof window !== "undefined") {
         window.scrollTo({ top: 0, behavior: "smooth" });
