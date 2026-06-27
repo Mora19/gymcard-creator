@@ -79,9 +79,10 @@ const BAND_HEX: Record<BandColor, string> = {
   Weiß: "#f5f5f5",
 };
 
-const BASE_PRICE = 990; // cents
+const BASE_PRICE = 799; // cents – 7,99 €
 const BAND_PRICE = 100;
-const PHONE_PRICE = 100;
+const PHONE_PRICE = 0;
+const LOGO_PRICE = 0;
 
 function LandingPage() {
   // Configurator state
@@ -99,18 +100,21 @@ function LandingPage() {
   const [contactName, setContactName] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [contactEmail, setContactEmail] = useState("");
-  const [studio, setStudio] = useState("");
+  const [pickupLocation, setPickupLocation] = useState("");
+  const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState<{ whatsappUrl: string } | null>(null);
+  const [submitted, setSubmitted] = useState<{ whatsappUrl: string; orderNumber?: string | null } | null>(null);
 
-  const priceCents = useMemo(() => {
+  const unitPriceCents = useMemo(() => {
     let p = BASE_PRICE;
     if (withBand) p += BAND_PRICE;
     if (withPhoneOnHolder) p += PHONE_PRICE;
+    if (withLogo) p += LOGO_PRICE;
     return p;
-  }, [withBand, withPhoneOnHolder]);
+  }, [withBand, withPhoneOnHolder, withLogo]);
+  const priceCents = unitPriceCents * quantity;
 
   // Prevent identical holder + text color (no contrast)
   const conflictsWithHolder = (t: TextColor) => t === (holderColor as string);
