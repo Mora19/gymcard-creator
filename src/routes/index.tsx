@@ -489,15 +489,50 @@ function LandingPage() {
                       className="bg-background"
                     />
                   </Field>
-                  <Field label="Studio / Abholort *">
+                  <Field label="Abholort / Studio *">
                     <Input
                       required
-                      placeholder="z. B. Fitness First Musterstraße"
-                      value={studio}
-                      onChange={(e) => setStudio(e.target.value)}
+                      placeholder="z. B. Heilbronn, Bad Rappenau, Fitness First Musterstr."
+                      value={pickupLocation}
+                      onChange={(e) => setPickupLocation(e.target.value)}
                       maxLength={120}
                       className="bg-background"
                     />
+                  </Field>
+                  <Field label="Stückzahl *">
+                    <div className="flex items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        aria-label="Weniger"
+                      >
+                        −
+                      </Button>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={99}
+                        value={quantity}
+                        onChange={(e) =>
+                          setQuantity(Math.max(1, Math.min(99, Number(e.target.value) || 1)))
+                        }
+                        className="w-20 bg-background text-center"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setQuantity((q) => Math.min(99, q + 1))}
+                        aria-label="Mehr"
+                      >
+                        +
+                      </Button>
+                      <span className="text-xs text-muted-foreground">
+                        {formatPrice(unitPriceCents)} / Stück
+                      </span>
+                    </div>
                   </Field>
                   <Field label="Anmerkung (optional)">
                     <Textarea
@@ -508,6 +543,9 @@ function LandingPage() {
                       className="bg-background"
                     />
                   </Field>
+                  <p className="text-xs text-muted-foreground">
+                    Deine Angaben werden nur zur Bearbeitung deiner Bestellung verwendet.
+                  </p>
                   <label className="flex items-start gap-3 rounded-md border border-border bg-background p-3 text-sm">
                     <Checkbox
                       checked={agreed}
@@ -528,10 +566,20 @@ function LandingPage() {
                   <h3 className="font-display text-2xl font-black uppercase">
                     Bestellung erhalten!
                   </h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Wir melden uns kurz per WhatsApp und geben dir Bescheid,
-                    sobald dein Halter zur Abholung im Studio bereit ist
-                    (in der Regel innerhalb einer Woche).
+                  {submitted.orderNumber && (
+                    <p className="mt-1 font-mono text-sm text-brand">{submitted.orderNumber}</p>
+                  )}
+                  <div className="mx-auto mt-4 max-w-sm space-y-1 rounded-md border border-border bg-background/40 p-4 text-left text-sm">
+                    <SummaryRow k="Name" v={contactName} />
+                    <SummaryRow k="Telefon" v={contactPhone} />
+                    <SummaryRow k="Halterfarbe" v={holderColor} />
+                    <SummaryRow k="Textfarbe" v={textColor} />
+                    <SummaryRow k="Band" v={withBand ? `ja · ${bandColor}` : "nein"} />
+                    <SummaryRow k="Stückzahl" v={String(quantity)} />
+                    <SummaryRow k="Gesamtpreis" v={formatPrice(priceCents)} bold />
+                  </div>
+                  <p className="mt-4 text-sm text-muted-foreground">
+                    Die Bestellung wird von Moritz geprüft und anschließend produziert.
                   </p>
                   <Button
                     asChild
