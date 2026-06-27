@@ -123,7 +123,7 @@ export const updateOrder = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await ensureAdmin(context.supabase, context.userId);
-    const patch: Record<string, unknown> = {};
+    const patch: { status?: string; paid?: boolean } = {};
     if (data.status !== undefined) patch.status = data.status;
     if (data.paid !== undefined) patch.paid = data.paid;
     const { error } = await context.supabase.from("orders").update(patch).eq("id", data.id);
