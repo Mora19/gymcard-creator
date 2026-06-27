@@ -918,6 +918,15 @@ function PriceRow({ label, value, muted }: { label: string; value: string; muted
   );
 }
 
+function SummaryRow({ k, v, bold }: { k: string; v: string; bold?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-xs uppercase tracking-wider text-muted-foreground">{k}</span>
+      <span className={bold ? "font-bold text-brand" : "font-medium"}>{v}</span>
+    </div>
+  );
+}
+
 /* ---------- live preview (real 3D-printed holder, fixed 3-zone layout) ---------- */
 
 function HolderPreview({
