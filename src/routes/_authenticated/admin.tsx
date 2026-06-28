@@ -83,7 +83,7 @@ function formatPrice(cents: number) {
   return (cents / 100).toFixed(2).replace(".", ",") + " €";
 }
 
-const STATUS_OPTIONS = ["new", "in_production", "ready", "completed", "cancelled"] as const;
+const STATUS_OPTIONS = ["new", "printed", "ready", "delivered", "cancelled"] as const;
 
 function AdminPage() {
   const navigate = useNavigate();
