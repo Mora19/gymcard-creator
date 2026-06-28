@@ -190,6 +190,7 @@ function AdminPage() {
                   <th className="px-3 py-3 text-left">Status</th>
                   <th className="px-3 py-3 text-left">Bezahlt</th>
                   <th className="px-3 py-3 text-left">Notiz</th>
+                  <th className="px-3 py-3 text-left">Erstellt</th>
                 </tr>
               </thead>
               <tbody>
