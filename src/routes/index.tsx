@@ -88,7 +88,7 @@ function LandingPage() {
   // Configurator state
   const [withLogo, setWithLogo] = useState(false);
   const [withName, setWithName] = useState(true);
-  const [name, setName] = useState("MORITZ");
+  const [name, setName] = useState("Moritz");
   const [withPhoneOnHolder, setWithPhoneOnHolder] = useState(true);
   const [phoneOnHolder, setPhoneOnHolder] = useState("0176 42697714");
   const [holderColor, setHolderColor] = useState<HolderColor>("Schwarz");
