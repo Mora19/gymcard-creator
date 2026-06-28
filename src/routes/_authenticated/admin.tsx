@@ -44,7 +44,7 @@ function csvEscape(value: string | number | boolean | null | undefined) {
 
 function orderToCsvRow(o: AdminOrder) {
   return [
-    o.order_number ?? o.id,
+    o.order_number ?? "",
     o.contact_name,
     o.contact_phone,
     o.name_on_holder ? o.holder_name ?? "" : "",
@@ -72,8 +72,7 @@ function downloadCsv(orders: AdminOrder[]) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  const date = new Date().toISOString().slice(0, 10);
-  a.download = `gymtag_orders_${date}.csv`;
+  a.download = `orders.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
