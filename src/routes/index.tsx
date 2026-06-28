@@ -570,8 +570,9 @@ function LandingPage() {
                     <p className="mt-1 font-mono text-sm text-brand">{submitted.orderNumber}</p>
                   )}
                   <div className="mx-auto mt-4 max-w-sm space-y-1 rounded-md border border-border bg-background/40 p-4 text-left text-sm">
-                    <SummaryRow k="Name" v={contactName} />
-                    <SummaryRow k="Telefon" v={contactPhone} />
+                    <SummaryRow k="Kunde" v={contactName} />
+                    {withName && <SummaryRow k="Name auf Halter" v={name} />}
+                    {withPhoneOnHolder && <SummaryRow k="Tel auf Halter" v={phoneOnHolder} />}
                     <SummaryRow k="Halterfarbe" v={holderColor} />
                     <SummaryRow k="Textfarbe" v={textColor} />
                     <SummaryRow k="Band" v={withBand ? `ja · ${bandColor}` : "nein"} />
