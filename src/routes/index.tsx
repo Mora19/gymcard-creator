@@ -390,9 +390,9 @@ function LandingPage() {
                 />
                 {withName && (
                   <Input
-                    placeholder="z. B. MORITZ KLÖSTERS"
+                    placeholder="z. B. Moritz Klösters"
                     value={name}
-                    onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 22))}
+                    onChange={(e) => setName(e.target.value.slice(0, 22))}
                     maxLength={22}
                     className="bg-background"
                   />
