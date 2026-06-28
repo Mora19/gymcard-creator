@@ -116,7 +116,7 @@ export const updateOrder = createServerFn({ method: "POST" })
     z
       .object({
         id: z.string().uuid(),
-        status: z.enum(["new", "in_production", "ready", "completed", "cancelled"]).optional(),
+        status: z.enum(["new", "printed", "ready", "delivered", "cancelled"]).optional(),
         paid: z.boolean().optional(),
       })
       .parse(d),

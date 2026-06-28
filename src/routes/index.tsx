@@ -88,7 +88,7 @@ function LandingPage() {
   // Configurator state
   const [withLogo, setWithLogo] = useState(false);
   const [withName, setWithName] = useState(true);
-  const [name, setName] = useState("MORITZ");
+  const [name, setName] = useState("Moritz");
   const [withPhoneOnHolder, setWithPhoneOnHolder] = useState(true);
   const [phoneOnHolder, setPhoneOnHolder] = useState("0176 42697714");
   const [holderColor, setHolderColor] = useState<HolderColor>("Schwarz");
@@ -390,9 +390,9 @@ function LandingPage() {
                 />
                 {withName && (
                   <Input
-                    placeholder="z. B. MORITZ KLÖSTERS"
+                    placeholder="z. B. Moritz Klösters"
                     value={name}
-                    onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 22))}
+                    onChange={(e) => setName(e.target.value.slice(0, 22))}
                     maxLength={22}
                     className="bg-background"
                   />
@@ -570,8 +570,9 @@ function LandingPage() {
                     <p className="mt-1 font-mono text-sm text-brand">{submitted.orderNumber}</p>
                   )}
                   <div className="mx-auto mt-4 max-w-sm space-y-1 rounded-md border border-border bg-background/40 p-4 text-left text-sm">
-                    <SummaryRow k="Name" v={contactName} />
-                    <SummaryRow k="Telefon" v={contactPhone} />
+                    <SummaryRow k="Kunde" v={contactName} />
+                    {withName && <SummaryRow k="Name auf Halter" v={name} />}
+                    {withPhoneOnHolder && <SummaryRow k="Tel auf Halter" v={phoneOnHolder} />}
                     <SummaryRow k="Halterfarbe" v={holderColor} />
                     <SummaryRow k="Textfarbe" v={textColor} />
                     <SummaryRow k="Band" v={withBand ? `ja · ${bandColor}` : "nein"} />
