@@ -234,6 +234,7 @@ function AdminPage() {
                       </button>
                     </td>
                     <td className="max-w-[220px] px-3 py-3 text-xs text-muted-foreground">{o.note}</td>
+                    <td className="px-3 py-3 text-xs text-muted-foreground whitespace-nowrap">{new Date(o.created_at).toLocaleString("de-DE")}</td>
                   </tr>
                 ))}
               </tbody>
