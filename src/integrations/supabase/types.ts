@@ -115,6 +115,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_order: {
+        Args: { payload: Json }
+        Returns: {
+          order_number: string
+          status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
