@@ -35,34 +35,32 @@ export const submitOrder = createServerFn({ method: "POST" })
     const payload = {
       contact_name: data.contact_name,
       contact_phone: data.contact_phone,
-      contact_email: data.contact_email || null,
-      studio: data.pickup_location,
+      contact_email: data.contact_email || "",
       pickup_location: data.pickup_location,
-      note: data.note || null,
+      note: data.note || "",
       holder_color: data.holder_color,
       text_color: data.text_color,
       name_on_holder: data.name_on_holder,
-      holder_name: data.name_on_holder ? data.holder_name || null : null,
+      holder_name: data.name_on_holder ? data.holder_name || "" : "",
       phone_on_holder: data.phone_on_holder,
-      holder_phone: data.phone_on_holder ? data.holder_phone || null : null,
+      holder_phone: data.phone_on_holder ? data.holder_phone || "" : "",
       with_logo: data.with_logo,
       with_band: data.with_band,
-      band_color: data.with_band ? data.band_color || null : null,
+      band_color: data.with_band ? data.band_color || "" : "",
       quantity: data.quantity,
       price_cents: data.price_cents,
     };
 
     const { data: row, error } = await supabase
-      .from("orders")
-      .insert(payload)
-      .select("id, order_number")
+      .rpc("create_order", { payload })
       .single();
 
     if (error) {
-      console.error("[orders.insert]", error);
+      console.error("[orders.create_order]", JSON.stringify(error), error);
       throw new Error("Bestellung konnte nicht gespeichert werden.");
     }
-    return { id: row.id, order_number: row.order_number };
+    const result = row as { order_number: string; status: string };
+    return { order_number: result.order_number, status: result.status };
   });
 
 export type AdminOrder = {
