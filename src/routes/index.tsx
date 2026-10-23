@@ -137,7 +137,7 @@ function LandingPage() {
       return;
     }
     if (!contactName || !contactPhone || !pickupLocation) {
-      toast.error("Bitte fülle Name, WhatsApp-Nummer und Abholort aus.");
+      toast.error("Bitte fülle Name, WhatsApp-Nummer und Wunschort für die Übergabe aus.");
       return;
     }
     if (submitLock.current || submitted) return;
@@ -504,7 +504,7 @@ function LandingPage() {
                       className="bg-background"
                     />
                   </Field>
-                  <Field label="Abholort / Studio *">
+                  <Field label="Wunschort / Studio für die Übergabe *">
                     <Input
                       required
                       placeholder="z. B. Heilbronn, Bad Rappenau, Fitness First Musterstr."
