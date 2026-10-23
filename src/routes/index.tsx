@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   CreditCard,
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "3D-gedruckter Kartenhalter für deine Gym-Karte. Mit Name, optional Telefonnummer und Band für die Flasche. Lokal gefertigt, im Studio abholbar.",
+          "3D-gedruckter Kartenhalter für deine Gym-Karte ab 4,99 €. Mit Name, optional Telefonnummer und Band für die Flasche. Lokal gefertigt.",
       },
       { property: "og:title", content: "Nie wieder Kartenchaos – dein Gym-Kartenhalter" },
       {
@@ -79,7 +79,7 @@ const BAND_HEX: Record<BandColor, string> = {
   Weiß: "#f5f5f5",
 };
 
-const BASE_PRICE = 799; // cents – 7,99 €
+const BASE_PRICE = 499; // cents – 4,99 € (must match create_order in DB)
 const BAND_PRICE = 100;
 const PHONE_PRICE = 0;
 const LOGO_PRICE = 0;
@@ -88,12 +88,12 @@ function LandingPage() {
   // Configurator state
   const [withLogo, setWithLogo] = useState(false);
   const [withName, setWithName] = useState(true);
-  const [name, setName] = useState("Moritz");
+  const [name, setName] = useState("Max Mustermann");
   const [withPhoneOnHolder, setWithPhoneOnHolder] = useState(true);
-  const [phoneOnHolder, setPhoneOnHolder] = useState("0176 42697714");
+  const [phoneOnHolder, setPhoneOnHolder] = useState("0170 1234567");
   const [holderColor, setHolderColor] = useState<HolderColor>("Schwarz");
   const [textColor, setTextColor] = useState<TextColor>("Rot");
-  const [withBand, setWithBand] = useState(true);
+  const [withBand, setWithBand] = useState(false);
   const [bandColor, setBandColor] = useState<BandColor>("Rot");
 
   // Order form state
@@ -106,6 +106,7 @@ function LandingPage() {
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState<{ whatsappUrl: string; orderNumber?: string | null } | null>(null);
+  const submitLock = useRef(false);
 
   const unitPriceCents = useMemo(() => {
     let p = BASE_PRICE;
@@ -139,6 +140,8 @@ function LandingPage() {
       toast.error("Bitte fülle Name, WhatsApp-Nummer und Abholort aus.");
       return;
     }
+    if (submitLock.current || submitted) return;
+    submitLock.current = true;
     setSubmitting(true);
     try {
       const res = await submit({
@@ -181,12 +184,15 @@ function LandingPage() {
         .join("\n");
       const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
       setSubmitted({ whatsappUrl, orderNumber: res?.order_number ?? null });
-      toast.success("Bestellung gesendet! Wir melden uns kurz per WhatsApp.");
-      if (typeof window !== "undefined") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+      toast.success("Bestellung gespeichert! Wir melden uns per WhatsApp.");
+      setTimeout(() => {
+        document
+          .getElementById("bestellbestaetigung")
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
     } catch (err) {
       console.error(err);
+      submitLock.current = false;
       toast.error("Etwas ist schiefgelaufen. Bitte versuche es erneut.");
     } finally {
       setSubmitting(false);
@@ -213,13 +219,22 @@ function LandingPage() {
             </div>
             <span className="font-display text-lg font-bold tracking-tight">GymTag</span>
           </div>
-          <Button
-            onClick={scrollToConfig}
-            size="sm"
-            className="bg-brand text-brand-foreground hover:bg-brand/90"
-          >
-            Jetzt bestellen
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild size="sm" variant="outline" className="h-9">
+              <a href={whatsappFrage} target="_blank" rel="noreferrer" aria-label="Frage per WhatsApp stellen">
+                <Phone className="h-4 w-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Frage stellen</span>
+                <span className="sm:hidden ml-1">WhatsApp</span>
+              </a>
+            </Button>
+            <Button
+              onClick={scrollToConfig}
+              size="sm"
+              className="h-9 bg-brand text-brand-foreground hover:bg-brand/90"
+            >
+              Jetzt bestellen
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -273,7 +288,7 @@ function LandingPage() {
             </div>
 
             <div className="mt-7 flex flex-wrap gap-2">
-              {["3D-gedruckt", "Individuell", "Abholung im Studio"].map((b) => (
+              {["3D-gedruckt", "Lokal gefertigt", "Übergabe nach Absprache"].map((b) => (
                 <span
                   key={b}
                   className="rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium text-muted-foreground"
@@ -331,7 +346,7 @@ function LandingPage() {
             { icon: Tag, t: "Direkt erkennbar, wem sie gehört" },
             { icon: Phone, t: "Optional Telefon bei Verlust" },
             { icon: Link2, t: "Wieder an die Flasche" },
-            { icon: MapPin, t: "Lokal gefertigt · Abholung im Studio" },
+            { icon: MapPin, t: "Lokal gefertigt · Übergabe nach Absprache" },
           ].map((b) => (
             <div key={b.t} className="flex items-center gap-3">
               <div className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-brand/15 text-brand">
@@ -390,7 +405,7 @@ function LandingPage() {
                 />
                 {withName && (
                   <Input
-                    placeholder="z. B. Moritz Klösters"
+                    placeholder="z. B. Max Mustermann"
                     value={name}
                     onChange={(e) => setName(e.target.value.slice(0, 22))}
                     maxLength={22}
@@ -399,14 +414,14 @@ function LandingPage() {
                 )}
 
                 <ToggleRow
-                  label="Telefonnummer auf dem Halter"
-                  hint="Damit deine Karte bei Verlust leichter zurückkommt."
+                  label="Telefonnummer auf dem Kartenhalter (optional)"
+                  hint="Öffentlich sichtbar aufgedruckt – hilft, wenn die Karte verloren geht. Kein Muss: einfach ausschalten."
                   checked={withPhoneOnHolder}
                   onChange={setWithPhoneOnHolder}
                 />
                 {withPhoneOnHolder && (
                   <Input
-                    placeholder="z. B. 0176 42697714"
+                    placeholder="z. B. 0170 1234567"
                     value={phoneOnHolder}
                     onChange={(e) => setPhoneOnHolder(e.target.value.slice(0, 25))}
                     className="bg-background"
@@ -469,7 +484,7 @@ function LandingPage() {
                       className="bg-background"
                     />
                   </Field>
-                  <Field label="WhatsApp / Telefonnummer *">
+                  <Field label="Kontaktnummer für deine Bestellung (WhatsApp) * – wird nicht gedruckt">
                     <Input
                       required
                       type="tel"
@@ -561,13 +576,13 @@ function LandingPage() {
               </ConfigCard>
 
               {submitted ? (
-                <div className="rounded-2xl border border-brand/40 bg-brand/10 p-6 text-center">
+                <div id="bestellbestaetigung" className="scroll-mt-20 rounded-2xl border border-brand/40 bg-brand/10 p-6 text-center">
                   <CheckCircle2 className="mx-auto mb-3 h-12 w-12 text-brand" />
                   <h3 className="font-display text-2xl font-black uppercase">
-                    Bestellung erhalten!
+                    Bestellung gespeichert!
                   </h3>
                   {submitted.orderNumber && (
-                    <p className="mt-1 font-mono text-sm text-brand">{submitted.orderNumber}</p>
+                    <p className="mt-1 font-mono text-sm text-brand">Bestell-Nr. {submitted.orderNumber}</p>
                   )}
                   <div className="mx-auto mt-4 max-w-sm space-y-1 rounded-md border border-border bg-background/40 p-4 text-left text-sm">
                     <SummaryRow k="Kunde" v={contactName} />
@@ -580,7 +595,7 @@ function LandingPage() {
                     <SummaryRow k="Gesamtpreis" v={formatPrice(priceCents)} bold />
                   </div>
                   <p className="mt-4 text-sm text-muted-foreground">
-                    Die Bestellung wird von Moritz geprüft und anschließend produziert.
+                    Deine Bestellung ist bereits bei uns gespeichert – du musst nichts weiter tun. Wir melden uns per WhatsApp mit den Details zur Übergabe.
                   </p>
                   <Button
                     asChild
@@ -592,7 +607,7 @@ function LandingPage() {
                     </a>
                   </Button>
                   <p className="mt-3 text-xs text-muted-foreground">
-                    Geht direkt an 0176 42697714
+                    Optional: öffnet WhatsApp mit vorausgefüllter Nachricht an 0176 42697714 – du sendest sie selbst ab.
                   </p>
                 </div>
               ) : (
@@ -630,8 +645,8 @@ function LandingPage() {
           <div className="grid gap-5 md:grid-cols-3">
             {[
               { n: "01", icon: Sparkles, title: "Konfigurieren", text: "Farbe, Name, Telefonnummer und Band – in 60 Sekunden zusammengestellt." },
-              { n: "02", icon: Phone, title: "Bestellung absenden", text: "Wir melden uns per WhatsApp und bestätigen dir alle Details." },
-              { n: "03", icon: Clock, title: "Innerhalb 1 Woche abholen", text: "Sobald fertig, holst du den Halter direkt im Studio an der Theke ab." },
+              { n: "02", icon: Phone, title: "Bestellung absenden", text: "Deine Bestellung wird gespeichert. Wir melden uns per WhatsApp und bestätigen dir alle Details." },
+              { n: "03", icon: Clock, title: "Übergabe nach Absprache", text: "Sobald dein Halter fertig ist, vereinbaren wir per WhatsApp die Übergabe." },
             ].map((s) => (
               <div key={s.n} className="relative rounded-xl border border-border bg-surface p-7">
                 <div className="absolute -top-3 left-6 rounded-sm bg-brand px-2 py-1 text-xs font-black uppercase tracking-wider text-brand-foreground">
@@ -660,7 +675,7 @@ function LandingPage() {
               { icon: Tag, title: "Sofort dein Halter", text: "Dein Name groß und rot. Direkt erkennbar, wem die Karte gehört." },
               { icon: ShieldCheck, title: "Telefonnummer bei Verlust", text: "Optional auf den Halter gedruckt – damit deine Karte schnell zurückfindet." },
               { icon: Package, title: "Band für die Flasche", text: "Mit Band hängt der Halter direkt an deiner Trinkflasche – nie wieder vergessen." },
-              { icon: Clock, title: "In 1 Woche im Studio", text: "Wenige Tage Fertigung. Abholung direkt an der Theke deines Studios." },
+              { icon: Clock, title: "Übergabe nach Absprache", text: "Lokal gefertigt. Wir melden uns per WhatsApp mit den Details zur Übergabe." },
               { icon: MapPin, title: "Lokal gefertigt", text: "Hier 3D-gedruckt – individuell für dich produziert, nichts von der Stange." },
             ].map((b) => (
               <div
@@ -688,13 +703,13 @@ function LandingPage() {
             Testaktion
           </span>
           <h2 className="mt-5 font-display text-5xl font-black uppercase md:text-6xl">
-            Ab <span className="text-brand">7,99 €</span>
+            Ab <span className="text-brand">4,99 €</span>
           </h2>
           <p className="mt-4 text-muted-foreground">
             Basis-Halter mit Name in deiner Wunschfarbe. Erweiterbar – ganz nach dir.
           </p>
           <div className="mx-auto mt-8 max-w-md space-y-2 rounded-xl border border-border bg-surface p-6 text-left text-sm">
-            <PriceRow label="Basis-Halter (personalisiert)" value="7,99 €" />
+            <PriceRow label="Basis-Halter (personalisiert)" value="4,99 €" />
             <PriceRow label="Band für die Flasche" value="+1,00 €" />
             <PriceRow label="Telefonnummer auf Halter" value="inklusive" />
             <PriceRow label="Studio-Logo (mit Freigabe)" value="inklusive" />
@@ -720,11 +735,11 @@ function LandingPage() {
             {[
               {
                 q: "Wie lange dauert die Fertigung?",
-                a: "In der Regel innerhalb 1 Woche. Wir melden uns per WhatsApp, sobald dein Halter zur Abholung bereit ist.",
+                a: "Jeder Halter wird lokal und individuell für dich gefertigt – meist geht es zügig. Wir melden uns per WhatsApp, sobald dein Halter fertig ist.",
               },
               {
-                q: "Wie läuft die Abholung?",
-                a: "Du holst deinen Halter direkt im Studio an der Theke ab – einfach Bescheid sagen, dass du einen GymTag bestellt hast.",
+                q: "Wie bekomme ich meinen Halter?",
+                a: "Die Übergabe erfolgt nach Absprache – wir melden uns per WhatsApp mit den Details. Studio-Abholung ist bei zukünftigen Kooperationen möglich.",
               },
               {
                 q: "Ist das Studio-Logo möglich?",
@@ -732,7 +747,7 @@ function LandingPage() {
               },
               {
                 q: "Muss ich direkt bezahlen?",
-                a: "Nein. Du bezahlst entspannt bei der Abholung im Studio. Vorab brauchst du nichts zu überweisen.",
+                a: "Nein. Du bezahlst bei der Übergabe. Vorab brauchst du nichts zu überweisen.",
               },
               {
                 q: "Kann ich auch ohne Telefonnummer bestellen?",
