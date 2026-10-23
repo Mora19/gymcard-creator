@@ -32,7 +32,7 @@ Stand: 23.10.2026. Ausgangscommit: `4cf4cc63aa9c21a579a555c3462ebded3e89a867`.
 
 ## Offene Angaben und manuelle Schritte
 
-1. **Anbieter bestätigen:** vollständiger rechtlich verantwortlicher Name/Firma und ladungsfähige Anschrift. Je nach tatsächlicher Rechtsform/Tätigkeit Vertretung, Register, zuständige Aufsicht und vorhandene Umsatzsteuer-/Wirtschafts-Identifikationsnummer ergänzen. Keine dieser Angaben wurde aus Benutzername, E-Mail-Adresse oder Produktfoto abgeleitet.
+1. **Anbieterangaben vervollständigen:** Der Nutzer hat Moritz Klösters als alleinigen Anbieter bestätigt; der Name steht jetzt in Impressum und Datenschutz. Die ladungsfähige Anschrift fehlt weiterhin. Weitere Angaben nur ergänzen, soweit sie tatsächlich vorliegen und gesetzlich erforderlich sind.
 2. **Datenschutz vervollständigen:** Verantwortlicher/Kontakt; tatsächliche Zwecke und Rechtsgrundlagen; Dienstleister und Empfänger (insbesondere Lovable/Hosting, Supabase, Google Fonts, WhatsApp und E-Mail); Regionen/Drittlandübermittlungen und Garantien; Auftragsverarbeitungsvereinbarungen; Speicher-/Löschfristen; Betroffenenrechte, ggf. Widerruf, Beschwerderecht/zuständige Aufsichtsbehörde; Pflichtfelder und Folgen fehlender Angaben. Tatsächliche Cookies, lokale Speicherung, Auth-Sitzungen, Fehlerberichte und Hosting-Protokolle prüfen. Die vorläufigen Seiten sind noch keine vollständigen Rechtstexte.
 3. **Vor regulärer Nutzung:** fehlende Informationen prüfen und die beiden Seiten vervollständigen; auch für aktuelle Datenerhebung gelten die Informationspflichten.
 4. **Öffentliche Version aktualisieren:** im bestehenden Lovable-Projekt den synchronisierten Stand prüfen und über Publish/Update veröffentlichen. Danach die bisherige öffentliche Adresse und beide Rechtshinweis-URLs direkt aufrufen.
@@ -61,3 +61,11 @@ Stand: 23.10.2026. Ausgangscommit: `4cf4cc63aa9c21a579a555c3462ebded3e89a867`.
 - Beide Dateien enthalten echte Transparenz, einschließlich der Öse: Alphakanal 0–255; Ecken und Ösenöffnung vollständig transparent. Die bisher sichtbaren Karoflächen entfallen. Keine Alpha- oder Bildbearbeitung nach dem imagegen-Export.
 - Alternativtext auf die neue Beispielbeschriftung „Max Mustermann“ angepasst; das kleine Foto erhält eine begrenzte Breite, damit der Text daneben auf schmalen Displays Platz behält.
 - Produktionsbuild, TypeScript und tatsächliche Bildladung im Browser erfolgreich geprüft. Bestellfunktionen, Preise, Kontaktlinks, Admin, CSV, Supabase und QR-/Hostingkonfiguration bleiben unverändert.
+
+## Bereich für Studios und bestätigte Anbieterangaben
+
+- Neuer Abschnitt `/#fuer-studios` mit Beschreibung, Ansprechpartner, Muster-/Kooperationsanfrage per E-Mail und einem Vorschlag für einen gemeinsam abgestimmten Praxistest. Link im Footer ergänzt. Keine neue Formularspeicherung und kein automatischer Versand.
+- Keine bestehenden Kooperationen, kostenlosen Muster oder nachgewiesenen Testergebnisse zugesagt. Logo-Nutzung weiterhin nur nach ausdrücklicher Freigabe; eine Freigabe selbst ist noch offen.
+- Anbietername Moritz Klösters ist vom Nutzer bestätigt und zentral in `src/lib/contact.ts` hinterlegt. Eine neue geschäftliche E-Mail-Adresse wird erst nach Einrichtung und Funktionstest eingesetzt.
+- Datenschutzinformationen an den tatsächlichen Code angepasst: lokal gebündelte Produktbilder, Admin-Anmeldesitzung, bedingte Fehlerberichte, Pflichtfelder und qualifizierte Betroffenenrechte. Rechtstexte bleiben ausdrücklich unvollständig, solange Anschrift, Rechtsgrundlagen, Löschkonzept und kontospezifische Dienstleister-/Vertragsangaben fehlen.
+- Build, TypeScript, gezielter ESLint und Browseransicht des neuen Studio-Bereichs sowie E-Mail-Ziel geprüft. Bestell-Payload, Preise, Supabase, Admin, CSV und Bilddateien unverändert.

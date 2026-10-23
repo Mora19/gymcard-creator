@@ -1,4 +1,5 @@
 export const CONTACT_EMAIL = "moritz.kloesters@gmail.com";
+export const PROVIDER_NAME = "Moritz Klösters";
 export const WHATSAPP_NUMBER = "4917642697714";
 
 // Default to the direct web client, including during server rendering.

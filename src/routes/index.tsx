@@ -33,6 +33,7 @@ import productOpen from "@/assets/gymtag-open-transparent.png";
 import { submitOrder } from "@/lib/orders.functions";
 import { CONTACT_EMAIL, getWhatsAppUrl } from "@/lib/contact";
 import { CopyTextButton } from "@/components/CopyTextButton";
+import { StudioSection } from "@/components/StudioSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -742,6 +743,8 @@ function LandingPage() {
         </div>
       </section>
 
+      <StudioSection />
+
       {/* FAQ */}
       <section className="border-b border-border/60 py-16 md:py-24">
         <div className="mx-auto max-w-3xl px-4">
@@ -838,6 +841,7 @@ function LandingPage() {
               WhatsApp Kontakt
             </a>
             <a href={`mailto:${CONTACT_EMAIL}`} className="break-all hover:text-foreground">{CONTACT_EMAIL}</a>
+            <a href="#fuer-studios" className="hover:text-foreground">Für Studios</a>
             <Link to="/impressum" className="hover:text-foreground">Impressum</Link>
             <Link to="/datenschutz" className="hover:text-foreground">Datenschutz</Link>
           </div>
