@@ -18,7 +18,8 @@ const orderSchema = z.object({
   with_band: z.boolean(),
   band_color: z.enum(["Rot", "Schwarz", "Weiß"]).optional().or(z.literal("")),
   quantity: z.number().int().min(1).max(99),
-  price_cents: z.number().int().nonnegative(),
+  // Ignored: the binding price is computed server-side in create_order.
+  price_cents: z.number().int().nonnegative().optional(),
 });
 
 export const submitOrder = createServerFn({ method: "POST" })
@@ -48,7 +49,6 @@ export const submitOrder = createServerFn({ method: "POST" })
       with_band: data.with_band,
       band_color: data.with_band ? data.band_color || "" : "",
       quantity: data.quantity,
-      price_cents: data.price_cents,
     };
 
     const { data: row, error } = await supabase
