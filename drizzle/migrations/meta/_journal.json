@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792760464867,
+      "tag": "0000_server_side_price_and_rpc_only_insert",
+      "breakpoints": true
+    }
+  ]
+}
