@@ -28,8 +28,8 @@ import {
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import productFront from "@/assets/gymtag-front-clean.png.asset.json";
-import productOpen from "@/assets/gymtag-open-clean.png.asset.json";
+import productFront from "@/assets/gymtag-front-transparent.png";
+import productOpen from "@/assets/gymtag-open-transparent.png";
 import { submitOrder } from "@/lib/orders.functions";
 import { CONTACT_EMAIL, getWhatsAppUrl } from "@/lib/contact";
 import { CopyTextButton } from "@/components/CopyTextButton";
@@ -312,19 +312,19 @@ function LandingPage() {
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <img
-                src={productFront.url}
-                alt="Schwarzer 3D-gedruckter Kartenhalter mit roter Schrift „Moritz Klösters“, Fitness First Logo und Telefonnummer"
-                width={1280}
-                height={960}
+                src={productFront}
+                alt="Schwarzer 3D-gedruckter Kartenhalter mit roter Beispielbeschriftung „Max Mustermann“, Fitness First Logo und Beispieltelefonnummer"
+                width={1672}
+                height={940}
                 className="mx-auto block w-full max-w-[420px] object-contain drop-shadow-[0_20px_40px_rgba(230,57,70,0.25)]"
               />
               <div className="mt-4 flex items-center gap-3 rounded-xl border border-border/60 bg-[#111114] p-3">
                 <img
-                  src={productOpen.url}
+                  src={productOpen}
                   alt="Geöffneter Kartenhalter mit eingesteckter roter Mitgliedskarte"
-                  width={640}
-                  height={320}
-                  className="block h-20 w-auto shrink-0 rounded-md object-contain sm:h-24"
+                  width={1975}
+                  height={796}
+                  className="block h-20 w-28 shrink-0 rounded-md object-contain sm:h-24 sm:w-32"
                 />
                 <div className="min-w-0">
                   <div className="text-xs font-bold uppercase tracking-wider text-brand">

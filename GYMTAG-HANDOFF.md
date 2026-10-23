@@ -53,3 +53,11 @@ Stand: 23.10.2026. Ausgangscommit: `4cf4cc63aa9c21a579a555c3462ebded3e89a867`.
 - Schmale Ansicht verbessert: Kopfzeile passt auch bei 320 Pixeln; auf kleinen Displays heißt der Bestellbutton „Bestellen“, seine zugängliche Beschriftung bleibt „Jetzt bestellen“. Der lange WhatsApp-Button darf umbrechen; lange Werte in der Bestellzusammenfassung ebenfalls. Dokumentsprache auf Deutsch gesetzt.
 - Geprüft: neuer Build, TypeScript, geänderte Dateien ohne Formatregel, unveränderte Preis-/Payload-/Nachrichtenlogik und Backend-Dateien. Kontakt/Kopfzeile bei 320 Pixeln visuell geprüft; manuelles Textfeld mit absichtlich gesperrtem Zwischenablagezugriff im Browser geprüft. Die Bestellbestätigung wurde ohne echte Testbestellung nur anhand ihres Codes geprüft.
 - Quellen zur Vorschau-Ursache: [W3C: COOP und Sandbox-Popups](https://w3c.github.io/webappsec/mitigation-guidance/COOP/rollouts.html), [Chrome: Vererbung von Sandbox-Beschränkungen](https://googlechrome.github.io/samples/allow-popups-to-escape-sandbox/index.html), [Lovable: Vorschau separat öffnen](https://docs.lovable.dev/features/projects/preview).
+
+## Austausch der zwei Produktfotos auf Nutzerwunsch
+
+- Neue Vorderansicht aus Nutzerfoto 1 und offene Ansicht aus Nutzerfoto 4, mit eingebauter imagegen-Bildbearbeitung freigestellt. Fotocharakter, Druckstruktur und Beschriftung geprüft; keine Änderung am Produktdesign beauftragt.
+- `src/assets/gymtag-front-transparent.png` (1672 × 940) und `src/assets/gymtag-open-transparent.png` (1975 × 796) ersetzen die beiden Bildverweise im oberen Produktbereich. Die bisherigen JSON-Bildverweise bleiben als Rückfallmöglichkeit erhalten.
+- Beide Dateien enthalten echte Transparenz, einschließlich der Öse: Alphakanal 0–255; Ecken und Ösenöffnung vollständig transparent. Die bisher sichtbaren Karoflächen entfallen. Keine Alpha- oder Bildbearbeitung nach dem imagegen-Export.
+- Alternativtext auf die neue Beispielbeschriftung „Max Mustermann“ angepasst; das kleine Foto erhält eine begrenzte Breite, damit der Text daneben auf schmalen Displays Platz behält.
+- Produktionsbuild, TypeScript und tatsächliche Bildladung im Browser erfolgreich geprüft. Bestellfunktionen, Preise, Kontaktlinks, Admin, CSV, Supabase und QR-/Hostingkonfiguration bleiben unverändert.
