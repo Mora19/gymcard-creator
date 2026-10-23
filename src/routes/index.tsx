@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -31,6 +31,7 @@ import { Toaster } from "@/components/ui/sonner";
 import productFront from "@/assets/gymtag-front-clean.png.asset.json";
 import productOpen from "@/assets/gymtag-open-clean.png.asset.json";
 import { submitOrder } from "@/lib/orders.functions";
+import { CONTACT_EMAIL, getWhatsAppUrl } from "@/lib/contact";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -51,8 +52,6 @@ export const Route = createFileRoute("/")({
   }),
   component: LandingPage,
 });
-
-const WHATSAPP_NUMBER = "4917642697714"; // 0176 42697714
 
 const HOLDER_COLORS = ["Schwarz", "Weiß", "Rot", "Dunkelgrau"] as const;
 const TEXT_COLORS = ["Rot", "Weiß", "Schwarz"] as const;
@@ -105,8 +104,14 @@ function LandingPage() {
   const [note, setNote] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState<{ whatsappUrl: string; orderNumber?: string | null } | null>(null);
+  const [submitted, setSubmitted] = useState<{ whatsappUrl: string; whatsappWebUrl: string; orderNumber?: string | null } | null>(null);
+  const [whatsappUserAgent, setWhatsappUserAgent] = useState("");
   const submitLock = useRef(false);
+
+  useEffect(() => {
+    const isIPad = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+    setWhatsappUserAgent(isIPad ? "iPad" : navigator.userAgent);
+  }, []);
 
   const unitPriceCents = useMemo(() => {
     let p = BASE_PRICE;
@@ -182,8 +187,8 @@ function LandingPage() {
       ]
         .filter(Boolean)
         .join("\n");
-      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
-      setSubmitted({ whatsappUrl, orderNumber: res?.order_number ?? null });
+      const whatsappUrl = getWhatsAppUrl(summary, whatsappUserAgent);
+      setSubmitted({ whatsappUrl, whatsappWebUrl: getWhatsAppUrl(summary), orderNumber: res?.order_number ?? null });
       toast.success("Bestellung gespeichert! Wir melden uns per WhatsApp.");
       setTimeout(() => {
         document
@@ -202,9 +207,8 @@ function LandingPage() {
   const scrollToConfig = () =>
     document.getElementById("konfigurator")?.scrollIntoView({ behavior: "smooth" });
 
-  const whatsappFrage = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    "Hi! Ich habe eine Frage zum personalisierten Kartenhalter.",
-  )}`;
+  const question = "Hi! Ich habe eine Frage zum personalisierten Kartenhalter.";
+  const whatsappFrage = getWhatsAppUrl(question, whatsappUserAgent);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -569,7 +573,7 @@ function LandingPage() {
                     />
                     <span className="text-muted-foreground">
                       Ich stimme der Verarbeitung meiner Daten zur Bearbeitung
-                      meiner Bestellung zu (Datenschutz).
+                      meiner Bestellung zu (<Link to="/datenschutz" target="_blank" rel="noreferrer" className="underline">Datenschutz</Link>).
                     </span>
                   </label>
                 </div>
@@ -608,6 +612,10 @@ function LandingPage() {
                   </Button>
                   <p className="mt-3 text-xs text-muted-foreground">
                     Optional: öffnet WhatsApp mit vorausgefüllter Nachricht an 0176 42697714 – du sendest sie selbst ab.
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Falls WhatsApp nicht öffnet: <a href={submitted.whatsappWebUrl} target="_blank" rel="noreferrer" className="underline">WhatsApp Web</a>
+                    {" · "}<a href={`mailto:${CONTACT_EMAIL}`} className="underline">E-Mail-Kontakt</a>. Deine Bestellung bleibt gespeichert.
                   </p>
                 </div>
               ) : (
@@ -772,7 +780,7 @@ function LandingPage() {
       </section>
 
       {/* WHATSAPP CTA BAR */}
-      <section className="bg-foreground py-8 text-background">
+      <section id="kontakt" className="bg-foreground py-8 text-background">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row">
           <div className="flex items-center gap-3">
             <div className="grid h-10 w-10 place-items-center rounded-full bg-brand text-brand-foreground">
@@ -781,6 +789,12 @@ function LandingPage() {
             <div>
               <div className="text-xs font-bold uppercase tracking-wider opacity-70">WhatsApp</div>
               <div className="font-display text-xl font-black">0176 42697714</div>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="mt-1 block break-all text-sm underline underline-offset-4">
+                {CONTACT_EMAIL}
+              </a>
+              <a href={getWhatsAppUrl(question)} target="_blank" rel="noreferrer" className="mt-1 block text-xs underline underline-offset-4">
+                Falls die App nicht öffnet: WhatsApp Web
+              </a>
             </div>
           </div>
           <Button
@@ -808,8 +822,9 @@ function LandingPage() {
             <a href={whatsappFrage} target="_blank" rel="noreferrer" className="hover:text-foreground">
               WhatsApp Kontakt
             </a>
-            <a href="#" className="hover:text-foreground">Impressum</a>
-            <a href="#" className="hover:text-foreground">Datenschutz</a>
+            <a href={`mailto:${CONTACT_EMAIL}`} className="break-all hover:text-foreground">{CONTACT_EMAIL}</a>
+            <Link to="/impressum" className="hover:text-foreground">Impressum</Link>
+            <Link to="/datenschutz" className="hover:text-foreground">Datenschutz</Link>
           </div>
         </div>
       </footer>
