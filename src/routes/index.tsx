@@ -32,6 +32,7 @@ import productFront from "@/assets/gymtag-front-clean.png.asset.json";
 import productOpen from "@/assets/gymtag-open-clean.png.asset.json";
 import { submitOrder } from "@/lib/orders.functions";
 import { CONTACT_EMAIL, getWhatsAppUrl } from "@/lib/contact";
+import { CopyTextButton } from "@/components/CopyTextButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -104,7 +105,7 @@ function LandingPage() {
   const [note, setNote] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState<{ whatsappUrl: string; whatsappWebUrl: string; orderNumber?: string | null } | null>(null);
+  const [submitted, setSubmitted] = useState<{ whatsappUrl: string; whatsappWebUrl: string; summary: string; orderNumber?: string | null } | null>(null);
   const [whatsappUserAgent, setWhatsappUserAgent] = useState("");
   const submitLock = useRef(false);
 
@@ -188,7 +189,7 @@ function LandingPage() {
         .filter(Boolean)
         .join("\n");
       const whatsappUrl = getWhatsAppUrl(summary, whatsappUserAgent);
-      setSubmitted({ whatsappUrl, whatsappWebUrl: getWhatsAppUrl(summary), orderNumber: res?.order_number ?? null });
+      setSubmitted({ whatsappUrl, whatsappWebUrl: getWhatsAppUrl(summary), summary, orderNumber: res?.order_number ?? null });
       toast.success("Bestellung gespeichert! Wir melden uns per WhatsApp.");
       setTimeout(() => {
         document
@@ -217,14 +218,14 @@ function LandingPage() {
       {/* NAV */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-lg">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-brand text-brand-foreground">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-brand text-brand-foreground sm:h-8 sm:w-8">
               <Tag className="h-4 w-4" />
             </div>
-            <span className="font-display text-lg font-bold tracking-tight">GymTag</span>
+            <span className="font-display text-base font-bold tracking-tight sm:text-lg">GymTag</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Button asChild size="sm" variant="outline" className="h-9">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Button asChild size="sm" variant="outline" className="h-9 px-2 sm:px-3">
               <a href={whatsappFrage} target="_blank" rel="noreferrer" aria-label="Frage per WhatsApp stellen">
                 <Phone className="h-4 w-4 sm:mr-1.5" />
                 <span className="hidden sm:inline">Frage stellen</span>
@@ -234,9 +235,11 @@ function LandingPage() {
             <Button
               onClick={scrollToConfig}
               size="sm"
-              className="h-9 bg-brand text-brand-foreground hover:bg-brand/90"
+              aria-label="Jetzt bestellen"
+              className="h-9 bg-brand px-2 text-brand-foreground hover:bg-brand/90 sm:px-3"
             >
-              Jetzt bestellen
+              <span className="sm:hidden">Bestellen</span>
+              <span className="hidden sm:inline">Jetzt bestellen</span>
             </Button>
           </div>
         </div>
@@ -604,7 +607,7 @@ function LandingPage() {
                   <Button
                     asChild
                     size="lg"
-                    className="mt-5 bg-brand text-brand-foreground hover:bg-brand/90"
+                    className="mt-5 h-auto min-h-10 max-w-full whitespace-normal bg-brand px-4 py-3 text-brand-foreground hover:bg-brand/90"
                   >
                     <a href={submitted.whatsappUrl} target="_blank" rel="noreferrer">
                       <Phone className="mr-2 h-4 w-4" /> Zusammenfassung per WhatsApp senden
@@ -617,6 +620,12 @@ function LandingPage() {
                     Falls WhatsApp nicht öffnet: <a href={submitted.whatsappWebUrl} target="_blank" rel="noreferrer" className="underline">WhatsApp Web</a>
                     {" · "}<a href={`mailto:${CONTACT_EMAIL}`} className="underline">E-Mail-Kontakt</a>. Deine Bestellung bleibt gespeichert.
                   </p>
+                  <div className="mt-3">
+                    <CopyTextButton value={submitted.summary} label="Zusammenfassung kopieren" manualLabel="Bestellzusammenfassung zum Kopieren" />
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Bei blockiertem Browser-Aufruf: in deinem WhatsApp einen Chat mit +49 176 42697714 öffnen und den kopierten Text einfügen. Du sendest ihn selbst ab.
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <Button
@@ -795,6 +804,12 @@ function LandingPage() {
               <a href={getWhatsAppUrl(question)} target="_blank" rel="noreferrer" className="mt-1 block text-xs underline underline-offset-4">
                 Falls die App nicht öffnet: WhatsApp Web
               </a>
+              <div className="mt-2">
+                <CopyTextButton value="+49 176 42697714" label="Nummer kopieren" manualLabel="WhatsApp-Nummer zum Kopieren" />
+                <p className="mt-2 max-w-sm text-xs opacity-80">
+                  Browser-Aufruf blockiert? Nummer kopieren und den Chat direkt in deinem WhatsApp öffnen. Oder schreib uns per E-Mail.
+                </p>
+              </div>
             </div>
           </div>
           <Button
@@ -953,8 +968,8 @@ function PriceRow({ label, value, muted }: { label: string; value: string; muted
 function SummaryRow({ k, v, bold }: { k: string; v: string; bold?: boolean }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <span className="text-xs uppercase tracking-wider text-muted-foreground">{k}</span>
-      <span className={bold ? "font-bold text-brand" : "font-medium"}>{v}</span>
+      <span className="shrink-0 text-xs uppercase tracking-wider text-muted-foreground">{k}</span>
+      <span className={`min-w-0 break-words text-right ${bold ? "font-bold text-brand" : "font-medium"}`}>{v}</span>
     </div>
   );
 }

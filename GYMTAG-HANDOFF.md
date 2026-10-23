@@ -44,3 +44,12 @@ Stand: 23.10.2026. Ausgangscommit: `4cf4cc63aa9c21a579a555c3462ebded3e89a867`.
 - [§ 5 DDG](https://www.gesetze-im-internet.de/ddg/__5.html)
 - [DSGVO, insbesondere Artikel 13/14](https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=celex%3A32016R0679)
 - [Datenschutzkonferenz: Informationspflichten, Kurzpapier 10](https://www.datenschutzkonferenz-online.de/media/kp/dsk_kpnr_10.pdf)
+
+## Nachprüfung vor der Vorstellung
+
+- Nutzer bestätigt: `ERR_BLOCKED_BY_RESPONSE` beim PC-Aufruf stammt aus der Lovable-Vorschau; die mobile Weiterleitung funktioniert. Derselbe Desktop-Link lädt im getrennten Browser bis zur WhatsApp-Anmeldung. Die konkrete Browserblockade ist damit nicht am Nutzer-PC behoben; eine Vorschau-Beschränkung ist die wahrscheinliche Ursache. Auch neue Tabs aus eingebetteten Vorschauen können deren Sandbox-Beschränkungen übernehmen.
+- PC-Test: GymTag über Lovables **Open in new tab** außerhalb der eingebetteten Vorschau öffnen und dort WhatsApp testen. Alternativ die WhatsApp-Adresse in einen über das Pluszeichen frisch geöffneten Browser-Tab einfügen und bestätigen. Keine Browser-Schutzfunktionen abschalten.
+- Zusätzliche Absicherung: **Nummer kopieren** im Kontaktbereich und **Zusammenfassung kopieren** nach erfolgreicher Speicherung. Bei verweigertem Zwischenablagezugriff erscheint automatisch ein beschriftetes, manuell markierbares Textfeld. Die Buttons haben `type="button"` und legen keine Bestellung an; Nachrichten werden weiter ausschließlich vom Nutzer abgesendet.
+- Schmale Ansicht verbessert: Kopfzeile passt auch bei 320 Pixeln; auf kleinen Displays heißt der Bestellbutton „Bestellen“, seine zugängliche Beschriftung bleibt „Jetzt bestellen“. Der lange WhatsApp-Button darf umbrechen; lange Werte in der Bestellzusammenfassung ebenfalls. Dokumentsprache auf Deutsch gesetzt.
+- Geprüft: neuer Build, TypeScript, geänderte Dateien ohne Formatregel, unveränderte Preis-/Payload-/Nachrichtenlogik und Backend-Dateien. Kontakt/Kopfzeile bei 320 Pixeln visuell geprüft; manuelles Textfeld mit absichtlich gesperrtem Zwischenablagezugriff im Browser geprüft. Die Bestellbestätigung wurde ohne echte Testbestellung nur anhand ihres Codes geprüft.
+- Quellen zur Vorschau-Ursache: [W3C: COOP und Sandbox-Popups](https://w3c.github.io/webappsec/mitigation-guidance/COOP/rollouts.html), [Chrome: Vererbung von Sandbox-Beschränkungen](https://googlechrome.github.io/samples/allow-popups-to-escape-sandbox/index.html), [Lovable: Vorschau separat öffnen](https://docs.lovable.dev/features/projects/preview).
