@@ -3,7 +3,7 @@ import { LegalPage } from "@/components/LegalPage";
 import { CONTACT_EMAIL, PROVIDER_NAME } from "@/lib/contact";
 
 export const Route = createFileRoute("/datenschutz")({
-  head: () => ({ meta: [{ title: "Datenschutz – GymTag" }] }),
+  head: () => ({ meta: [{ title: "Datenschutz – recardnize" }] }),
   component: Datenschutz,
 });
 
@@ -15,7 +15,7 @@ function Datenschutz() {
           Verantwortlicher und Kontakt
         </h2>
         <p>
-          Verantwortlich für GymTag: {PROVIDER_NAME}. Die vollständige Anschrift wird noch ergänzt.
+          Verantwortlich für recardnize: {PROVIDER_NAME}. Die vollständige Anschrift wird noch ergänzt.
         </p>
         <p>
           Fragen zu deinen Daten kannst du an{" "}

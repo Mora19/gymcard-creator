@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Loader2, Tag } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Admin Login · GymTag" }] }),
+  head: () => ({ meta: [{ title: "Admin Login · recardnize" }] }),
   component: AuthPage,
 });
 
@@ -69,7 +69,7 @@ function AuthPage() {
           <div className="grid h-8 w-8 place-items-center rounded-md bg-brand text-brand-foreground">
             <Tag className="h-4 w-4" />
           </div>
-          <span className="font-display text-lg font-bold uppercase">GymTag · Admin</span>
+          <span className="font-display text-lg font-bold uppercase">recardnize · Admin</span>
         </Link>
         <h1 className="font-display text-2xl font-black uppercase">
           {mode === "login" ? "Login" : "Registrieren"}

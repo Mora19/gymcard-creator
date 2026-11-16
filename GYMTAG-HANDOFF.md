@@ -1,5 +1,20 @@
 # GymTag: Kontakt- und Rechtshinweis-Korrektur
 
+## Aktualisierung: recardnize, 16.11.2026
+
+- Auf Nutzerentscheidung heißt die sichtbare Marke jetzt **recardnize**. Angepasst wurden Kopf-/Fußzeile, Studio-/Legaltexte, Seitentitel, Social-Metadaten und die reine Admin-Anzeige. Das bisherige Social-Vorschaubild wurde entfernt, bis ein aktuelles Markenmotiv feststeht. Projekt-/Repositorynamen und Bilddateinamen bleiben als technische Kennungen bestehen.
+- Neuere veröffentlichte Änderungen von `origin/main` bis `38771fe` (Paketupdates, Router-Ausgabe und ErrorComponentProps) wurden vorwärts übernommen. Keine veröffentlichte Historie verändert, keine Paket-/Lockfileänderungen durch diese Arbeit.
+- Kontakt läuft nun über `WhatsAppContact`: bewusst zwischen direktem Web-Link und App-Link ohne neues Fenster wählen; keine Geräte-/Installationserkennung, kein zeitgesteuerter App-Fallback. Nummer, Nachricht und E-Mail können kopiert werden; verweigerte Zwischenablage führt zum bestehenden markierbaren Textfeld. Nachrichten werden weiterhin nur vom Besucher abgesendet.
+- Bestell-Payload, vollständiger Zusammenfassungstext, Preise (499/599 Cent), Speichern/Submit-Sperre, Supabase, Admin-Funktionen, CSV und Bildinhalte sind im Vergleich mit dem aktuellen Ausgangsstand unverändert. Der Dialog in der Bestellbestätigung erscheint erst nach erfolgreicher Speicherung.
+- Studio-Bereich nennt konkrete Prüfsituationen und einen kleinen gemeinsam abzustimmenden Test. Kosten, Umfang, Dauer und Freigaben sind offen; keine offizielle Kooperation behauptet. FAQ erklärt den bislang persönlichen Lesertest ohne allgemeines Kompatibilitätsversprechen.
+- Alle Nutzerideen und Prioritäten stehen in [RECARDNIZE-ROADMAP.md](RECARDNIZE-ROADMAP.md). Vier Raster-Logoentwürfe liegen im lokalen Geschwisterordner `../recardnize-logo-konzepte/`; Auswahl, finale SVG und Druckmodell sind bewusst spätere Schritte.
+- Nutzer bestätigt: `hello@recardnize.com` ist noch nicht eingerichtet. Die erreichbare bisherige E-Mail-Adresse bleibt deshalb zentral hinterlegt. Domain/DNS/Postfach/Verträge wurden nicht geändert.
+- **Prüfung:** Produktionsbuild, TypeScript und gezieltes ESLint ohne die schon zuvor fehlschlagende globale Formatregel erfolgreich. Nach anfänglichen lokalen Abhängigkeits-/Dateisperren wurde mit neuem Installationscache und unveränderter Lockdatei neu installiert; der Build besteht auch im ursprünglichen Repositoryordner. Bestehende Deprecation-/Chunkgrößenhinweise wurden nicht durch Paketwechsel kaschiert.
+- **HTTP-Prüfung:** `/`, `/impressum`, `/datenschutz` und `/auth` liefern 200, eine unbekannte Adresse liefert 404; die serverseitigen HTML-Antworten enthalten recardnize und keine alte GymTag-Marke. Keine Testbestellung und keine Nachricht angelegt.
+- **Prüfgrenzen:** Lokaler Browserzugriff ist in dieser Sitzung nicht verfügbar. Deshalb keine neue visuelle Browser-/Mobilabnahme und kein realer Mac-/Windows-App-Aufruf; diese Tests sind auf echten Geräten noch offen. Ein Dialog und korrekt kodierte Links können externe WhatsApp-, Browser- oder Lovable-Vorschau-Beschränkungen nicht aufheben.
+- **GitHub/Lovable:** Der Code kann über den verbundenen Branch synchronisieren. Die Lovable-Lesewerkzeuge liefern in dieser Sitzung interne Fehler; eine Übernahme im Editor ist deshalb nicht unabhängig bestätigt. Nach GitHub-Push Editor-Commit prüfen und den bestehenden Publish-/Update-Vorgang ausführen. Die öffentliche Domain-/QR-Adresse bleibt bis zu einem separat geplanten Wechsel erhalten.
+- **Weiter offen:** veröffentlichbare ladungsfähige Anschrift, tatsächliche Datenschutz-/Dienstleister-/Löschangaben, Postfach-Test, Domainverknüpfung und öffentliche Veröffentlichung sowie Geräte-/Bestellprüfung. Die folgenden Abschnitte dokumentieren den bisherigen Stand und dessen noch relevante Prüfpunkte.
+
 Stand: 23.10.2026. Ausgangscommit: `4cf4cc63aa9c21a579a555c3462ebded3e89a867`.
 
 ## Änderungen

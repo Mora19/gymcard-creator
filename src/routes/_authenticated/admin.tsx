@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Download, LogOut, RefreshCw, Tag } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin · GymTag Bestellungen" }] }),
+  head: () => ({ meta: [{ title: "Admin · recardnize Bestellungen" }] }),
   component: AdminPage,
 });
 
@@ -133,7 +133,7 @@ function AdminPage() {
             <div className="grid h-8 w-8 place-items-center rounded-md bg-brand text-brand-foreground">
               <Tag className="h-4 w-4" />
             </div>
-            <span className="font-display text-lg font-bold uppercase">GymTag · Admin</span>
+            <span className="font-display text-lg font-bold uppercase">recardnize · Admin</span>
           </Link>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>

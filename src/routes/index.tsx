@@ -31,24 +31,25 @@ import { Toaster } from "@/components/ui/sonner";
 import productFront from "@/assets/gymtag-front-transparent.png";
 import productOpen from "@/assets/gymtag-open-transparent.png";
 import { submitOrder } from "@/lib/orders.functions";
-import { CONTACT_EMAIL, getWhatsAppUrl } from "@/lib/contact";
+import { CONTACT_EMAIL, getWhatsAppWebUrl } from "@/lib/contact";
 import { CopyTextButton } from "@/components/CopyTextButton";
 import { StudioSection } from "@/components/StudioSection";
+import { WhatsAppContact } from "@/components/WhatsAppContact";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Nie wieder Kartenchaos – personalisierter Gym-Kartenhalter" },
+      { title: "recardnize – personalisierter Kartenhalter fürs Gym" },
       {
         name: "description",
         content:
           "3D-gedruckter Kartenhalter für deine Gym-Karte ab 4,99 €. Mit Name, optional Telefonnummer und Band für die Flasche. Lokal gefertigt.",
       },
-      { property: "og:title", content: "Nie wieder Kartenchaos – dein Gym-Kartenhalter" },
+      { property: "og:title", content: "recardnize – deine Karte. Wiedererkennbar." },
       {
         property: "og:description",
         content:
-          "Personalisierter Kartenhalter mit Name, Telefonnummer und Band. Jetzt in 60 Sekunden konfigurieren.",
+          "Personalisierter 3D-Kartenhalter mit Name, optionaler Telefonnummer und Band. Lokal gefertigt ab 4,99 €.",
       },
     ],
   }),
@@ -106,14 +107,8 @@ function LandingPage() {
   const [note, setNote] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState<{ whatsappUrl: string; whatsappWebUrl: string; summary: string; orderNumber?: string | null } | null>(null);
-  const [whatsappUserAgent, setWhatsappUserAgent] = useState("");
+  const [submitted, setSubmitted] = useState<{ summary: string; orderNumber?: string | null } | null>(null);
   const submitLock = useRef(false);
-
-  useEffect(() => {
-    const isIPad = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
-    setWhatsappUserAgent(isIPad ? "iPad" : navigator.userAgent);
-  }, []);
 
   const unitPriceCents = useMemo(() => {
     let p = BASE_PRICE;
@@ -189,8 +184,7 @@ function LandingPage() {
       ]
         .filter(Boolean)
         .join("\n");
-      const whatsappUrl = getWhatsAppUrl(summary, whatsappUserAgent);
-      setSubmitted({ whatsappUrl, whatsappWebUrl: getWhatsAppUrl(summary), summary, orderNumber: res?.order_number ?? null });
+      setSubmitted({ summary, orderNumber: res?.order_number ?? null });
       toast.success("Bestellung gespeichert! Wir melden uns per WhatsApp.");
       setTimeout(() => {
         document
@@ -210,7 +204,6 @@ function LandingPage() {
     document.getElementById("konfigurator")?.scrollIntoView({ behavior: "smooth" });
 
   const question = "Hi! Ich habe eine Frage zum personalisierten Kartenhalter.";
-  const whatsappFrage = getWhatsAppUrl(question, whatsappUserAgent);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -223,16 +216,16 @@ function LandingPage() {
             <div className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-brand text-brand-foreground sm:h-8 sm:w-8">
               <Tag className="h-4 w-4" />
             </div>
-            <span className="font-display text-base font-bold tracking-tight sm:text-lg">GymTag</span>
+            <span className="font-display text-base font-bold tracking-tight sm:text-lg">recardnize</span>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <Button asChild size="sm" variant="outline" className="h-9 px-2 sm:px-3">
-              <a href={whatsappFrage} target="_blank" rel="noreferrer" aria-label="Frage per WhatsApp stellen">
+            <a href="#fuer-studios" className="mr-2 hidden text-sm text-muted-foreground hover:text-foreground md:inline">Für Studios</a>
+            <WhatsAppContact message={question}>
+              <Button type="button" size="sm" variant="outline" className="h-9 px-2 sm:px-3" aria-label="Frage per WhatsApp stellen">
                 <Phone className="h-4 w-4 sm:mr-1.5" />
                 <span className="hidden sm:inline">Frage stellen</span>
-                <span className="sm:hidden ml-1">WhatsApp</span>
-              </a>
-            </Button>
+              </Button>
+            </WhatsAppContact>
             <Button
               onClick={scrollToConfig}
               size="sm"
@@ -283,16 +276,16 @@ function LandingPage() {
               >
                 Jetzt personalisieren
               </Button>
+              <WhatsAppContact message={question}>
               <Button
+                type="button"
                 size="lg"
                 variant="outline"
-                asChild
                 className="h-12 border-border bg-surface text-base font-semibold hover:bg-accent"
               >
-                <a href={whatsappFrage} target="_blank" rel="noreferrer">
-                  <Phone className="mr-2 h-4 w-4" /> Per WhatsApp fragen
-                </a>
+                <Phone className="mr-2 h-4 w-4" /> Per WhatsApp fragen
               </Button>
+              </WhatsAppContact>
             </div>
 
             <div className="mt-7 flex flex-wrap gap-2">
@@ -605,20 +598,20 @@ function LandingPage() {
                   <p className="mt-4 text-sm text-muted-foreground">
                     Deine Bestellung ist bereits bei uns gespeichert – du musst nichts weiter tun. Wir melden uns per WhatsApp mit den Details zur Übergabe.
                   </p>
+                  <WhatsAppContact message={submitted.summary}>
                   <Button
-                    asChild
+                    type="button"
                     size="lg"
                     className="mt-5 h-auto min-h-10 max-w-full whitespace-normal bg-brand px-4 py-3 text-brand-foreground hover:bg-brand/90"
                   >
-                    <a href={submitted.whatsappUrl} target="_blank" rel="noreferrer">
-                      <Phone className="mr-2 h-4 w-4" /> Zusammenfassung per WhatsApp senden
-                    </a>
+                    <Phone className="mr-2 h-4 w-4" /> Zusammenfassung per WhatsApp senden
                   </Button>
+                  </WhatsAppContact>
                   <p className="mt-3 text-xs text-muted-foreground">
-                    Optional: öffnet WhatsApp mit vorausgefüllter Nachricht an 0176 42697714 – du sendest sie selbst ab.
+                    Optional: Kontaktweg wählen und die vorbereitete Zusammenfassung selbst absenden.
                   </p>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Falls WhatsApp nicht öffnet: <a href={submitted.whatsappWebUrl} target="_blank" rel="noreferrer" className="underline">WhatsApp Web</a>
+                    Falls WhatsApp nicht öffnet: <a href={getWhatsAppWebUrl(submitted.summary)} target="_blank" rel="noopener noreferrer" className="underline">WhatsApp Web</a>
                     {" · "}<a href={`mailto:${CONTACT_EMAIL}`} className="underline">E-Mail-Kontakt</a>. Deine Bestellung bleibt gespeichert.
                   </p>
                   <div className="mt-3">
@@ -685,7 +678,7 @@ function LandingPage() {
       <section className="border-b border-border/60 py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="mb-12 text-center font-display text-4xl font-black uppercase md:text-5xl">
-            Warum GymTag?
+            Warum recardnize?
           </h2>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {[
@@ -771,7 +764,11 @@ function LandingPage() {
               },
               {
                 q: "Kann ich auch ohne Telefonnummer bestellen?",
-                a: "Klar. Die Telefonnummer auf dem Halter ist komplett optional – nur eine zusätzliche Sicherheit bei Verlust.",
+                a: "Die Telefonnummer auf dem Halter ist freiwillig. Du kannst sie im Konfigurator ausschalten. Die Kontaktangaben für die Bestellabstimmung sind davon getrennt.",
+              },
+              {
+                q: "Funktioniert die Mitgliedskarte auch im Halter am Kartenleser?",
+                a: "Im bisherigen eigenen Praxistest konnte die Karte im Halter bleiben. Je nach Karte und Leser kann ein näheres Anhalten nötig sein. Die Funktion an anderen Lesern ist damit noch nicht bestätigt; bei einem Studio-Test prüfen wir sie gemeinsam vor Ort.",
               },
             ].map((f, i) => (
               <AccordionItem
@@ -804,8 +801,8 @@ function LandingPage() {
               <a href={`mailto:${CONTACT_EMAIL}`} className="mt-1 block break-all text-sm underline underline-offset-4">
                 {CONTACT_EMAIL}
               </a>
-              <a href={getWhatsAppUrl(question)} target="_blank" rel="noreferrer" className="mt-1 block text-xs underline underline-offset-4">
-                Falls die App nicht öffnet: WhatsApp Web
+              <a href={getWhatsAppWebUrl(question)} target="_blank" rel="noopener noreferrer" className="mt-1 block text-xs underline underline-offset-4">
+                Direkt zu WhatsApp Web
               </a>
               <div className="mt-2">
                 <CopyTextButton value="+49 176 42697714" label="Nummer kopieren" manualLabel="WhatsApp-Nummer zum Kopieren" />
@@ -815,15 +812,15 @@ function LandingPage() {
               </div>
             </div>
           </div>
+          <WhatsAppContact message={question}>
           <Button
-            asChild
+            type="button"
             size="lg"
             className="bg-brand text-brand-foreground hover:bg-brand/90"
           >
-            <a href={whatsappFrage} target="_blank" rel="noreferrer">
-              Direkt fragen
-            </a>
+            Direkt fragen
           </Button>
+          </WhatsAppContact>
         </div>
       </section>
 
@@ -834,12 +831,14 @@ function LandingPage() {
             <div className="grid h-7 w-7 place-items-center rounded-md bg-brand text-brand-foreground">
               <Tag className="h-3.5 w-3.5" />
             </div>
-            <span className="font-display font-black uppercase text-foreground">GymTag</span>
+            <span className="font-display font-black text-foreground">recardnize</span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-5">
-            <a href={whatsappFrage} target="_blank" rel="noreferrer" className="hover:text-foreground">
+            <WhatsAppContact message={question}>
+            <button type="button" className="hover:text-foreground">
               WhatsApp Kontakt
-            </a>
+            </button>
+            </WhatsAppContact>
             <a href={`mailto:${CONTACT_EMAIL}`} className="break-all hover:text-foreground">{CONTACT_EMAIL}</a>
             <a href="#fuer-studios" className="hover:text-foreground">Für Studios</a>
             <Link to="/impressum" className="hover:text-foreground">Impressum</Link>

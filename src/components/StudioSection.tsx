@@ -2,7 +2,7 @@ import { Building2, CheckCircle2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CONTACT_EMAIL, PROVIDER_NAME } from "@/lib/contact";
 
-const studioSubject = encodeURIComponent("GymTag – Muster und Studio-Kooperation anfragen");
+const studioSubject = encodeURIComponent("recardnize – Muster und Studio-Kooperation anfragen");
 
 export function StudioSection() {
   return (
@@ -24,11 +24,16 @@ export function StudioSection() {
             <br /> Ein gemeinsamer Praxistest.
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            GymTag ist ein lokal gefertigter, personalisierbarer Halter für Mitgliedskarten. Name,
+            recardnize ist ein lokal gefertigter, personalisierbarer Halter für Mitgliedskarten. Name,
             Farbe und eine optionale Telefonnummer machen die Karte individuell erkennbar. Wir
             suchen Studios, die gemeinsam mit uns prüfen möchten, wie sich der Halter in ihren
             Alltag einfügt.
           </p>
+          <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
+            <li><span className="font-semibold text-foreground">Karte zuordnen:</span> persönliche Beschriftung statt gleich aussehender Karten.</li>
+            <li><span className="font-semibold text-foreground">Pfand abgeben:</span> der Name bleibt am Halter sichtbar, etwa beim Ausleihen von Equipment.</li>
+            <li><span className="font-semibold text-foreground">Rückkontakt ermöglichen:</span> eine Telefonnummer kann auf Wunsch ergänzt werden.</li>
+          </ul>
           <Button
             asChild
             size="lg"
@@ -58,7 +63,7 @@ export function StudioSection() {
               },
               {
                 title: "Alltagstauglichkeit prüfen",
-                text: "Passform, Handhabung und den Kartenleser vor Ort testen. Umfang und Ablauf stimmen wir mit euch ab.",
+                text: "Mit einem kleinen, gemeinsam abgestimmten Test Passform, Entnahme, Kartenleser und Zuordnung im Alltag prüfen. Umfang, Dauer und Kosten besprechen wir vorab.",
               },
               {
                 title: "Gestaltung gemeinsam abstimmen",
@@ -75,7 +80,7 @@ export function StudioSection() {
             ))}
           </ol>
           <p className="mt-6 border-t border-border pt-4 text-xs leading-relaxed text-muted-foreground">
-            GymTag ist ein unabhängig entwickeltes Produkt. Die gezeigte Logo-Gestaltung ist ein
+            recardnize ist ein unabhängig entwickeltes Produkt. Die gezeigte Logo-Gestaltung ist ein
             Beispiel zur Abstimmung; eine offizielle Studio-Kooperation besteht derzeit nicht.
           </p>
         </div>

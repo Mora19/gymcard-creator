@@ -7,7 +7,7 @@ export function LegalPage({ title, children }: { title: string; children: ReactN
     <main className="min-h-screen bg-background px-4 py-12 text-foreground">
       <div className="mx-auto max-w-3xl space-y-6">
         <Link to="/" className="text-sm text-brand underline underline-offset-4">
-          Zurück zu GymTag
+          Zurück zu recardnize
         </Link>
         <h1 className="font-display text-3xl font-black">{title}</h1>
         <p className="rounded-xl border border-brand/40 bg-brand/10 p-4 text-sm">

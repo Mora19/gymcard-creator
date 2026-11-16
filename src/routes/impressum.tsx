@@ -3,7 +3,7 @@ import { LegalPage } from "@/components/LegalPage";
 import { CONTACT_EMAIL, PROVIDER_NAME } from "@/lib/contact";
 
 export const Route = createFileRoute("/impressum")({
-  head: () => ({ meta: [{ title: "Impressum – GymTag" }] }),
+  head: () => ({ meta: [{ title: "Impressum – recardnize" }] }),
   component: Impressum,
 });
 
@@ -11,7 +11,7 @@ function Impressum() {
   return (
     <LegalPage title="Impressum">
       <section className="space-y-2">
-        <h2 className="font-display text-lg font-bold text-foreground">Kontakt zu GymTag</h2>
+        <h2 className="font-display text-lg font-bold text-foreground">Kontakt zu recardnize</h2>
         <p>Anbieter: {PROVIDER_NAME}</p>
         <p>
           E-Mail:{" "}
