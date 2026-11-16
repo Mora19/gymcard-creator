@@ -1,4 +1,4 @@
-export const CONTACT_EMAIL = "moritz.kloesters@gmail.com";
+export const CONTACT_EMAIL = "hello@recardnize.com";
 export const PROVIDER_NAME = "Moritz Klösters";
 export const WHATSAPP_NUMBER = "4917642697714";
 export const WHATSAPP_DISPLAY_NUMBER = "+49 176 42697714";

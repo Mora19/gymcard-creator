@@ -1,5 +1,14 @@
 # GymTag: Kontakt- und Rechtshinweis-Korrektur
 
+## Kontaktadresse bestätigt und nächste Konzepte, 16.11.2026
+
+- Nutzer bestätigt funktionierenden Empfang/Versand für `hello@recardnize.com`. Zentrale `CONTACT_EMAIL` umgestellt: Kontaktbereich, Footer, Studio-Anfrage, Impressum/Datenschutz und WhatsApp-Ausweichkontakt verwenden diese Adresse. Die bestehende Admin-Registrierungs-/Anmeldeberechtigung bleibt unverändert.
+- Produktionsbuild, TypeScript und gezieltes ESLint der Änderung erfolgreich. Keine Bestell-, Preis-, Datenbank-, Bild- oder Logoänderung durch die E-Mail-Umstellung. Keine Mail versandt und keine DNS-/Kontoeinstellungen verändert.
+- Fertiger lokal gespeicherter Fototeaser unter `../recardnize-produktvideo/`, inklusive MP4, Poster, Quellen und Prüfnachweis. 22 Sekunden, 1920 × 1080, H.264, stumm, aus bestehenden echten Fotos und Logo A. Vollständiges Decoding aller 528 Frames geprüft; keine gefilmte Anwendung und keine simulierte Leserfunktion. Video ist noch nicht öffentlich eingebunden.
+- QR-Entscheidungsbericht unter `../recardnize-konzepte/qr-fundkontakt.md`: BrandTags/HiddenContact OEM gegen eigenen Homeserver-/VPS-Dienst und bestehendes Supabase abwägen. Keine Aussage, dass der beworbene Abpreis von 0,49 € für unsere Kleinserie gilt. E-Mail-Relay zuerst; Homeserverdetails beim Nutzer angefragt. Kein öffentlicher Fundkontakt oder Versanddienst eingerichtet.
+- Lokale Logo-Werkstatt unter `../recardnize-konzepte/logo-upload/` und Architekturskizze vorhanden. Dateien bleiben beim Ausprobieren im Browser; einfarbige SVG-Entwürfe, kein produktiver Upload, keine automatische Fertigungsfreigabe. Eigenständige Doppelklick-HTML und ZIP vorhanden. 17 automatische Prüfgruppen einschließlich PNG/JPEG, SVG-Angriffen, Innenräumen und mm-Skalierung sowie statischer HTTP-Smoke bestanden; kein interaktiver Browsertest. Produktionsanbindung ist eine separate nächste Umsetzung.
+- Anbieteranschrift, abschließende Datenschutzangaben und öffentliche Veröffentlichung bleiben offen. Lovable-Abgleich war zuletzt wegen interner Connectorfehler nicht verifizierbar.
+
 ## Logo A übernommen, 16.11.2026
 
 - Nutzer hat Wortmarke A ausgewählt und Website-Einbau sowie SVG/3D-Modell beauftragt. Neue `BrandLogo`-Komponente verwendet die transparente, aus der freigegebenen Vorlage abgeleitete SVG in Kopf-/Fußzeile sowie Login-/Admin-Kopfzeile. Die bisherige Tag-Kachel entfällt an diesen Stellen. Andere Produkt-/Formular-Icons bleiben bestehen.
