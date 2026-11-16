@@ -35,6 +35,7 @@ import { CONTACT_EMAIL, getWhatsAppWebUrl } from "@/lib/contact";
 import { CopyTextButton } from "@/components/CopyTextButton";
 import { StudioSection } from "@/components/StudioSection";
 import { WhatsAppContact } from "@/components/WhatsAppContact";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -211,13 +212,10 @@ function LandingPage() {
 
       {/* NAV */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-lg">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-brand text-brand-foreground sm:h-8 sm:w-8">
-              <Tag className="h-4 w-4" />
-            </div>
-            <span className="font-display text-base font-bold tracking-tight sm:text-lg">recardnize</span>
-          </div>
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+          <Link to="/" className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+            <BrandLogo className="w-[136px] sm:w-[170px]" />
+          </Link>
           <div className="flex items-center gap-1.5 sm:gap-2">
             <a href="#fuer-studios" className="mr-2 hidden text-sm text-muted-foreground hover:text-foreground md:inline">Für Studios</a>
             <WhatsAppContact message={question}>
@@ -827,12 +825,9 @@ function LandingPage() {
       {/* FOOTER */}
       <footer className="bg-surface/40 py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-sm text-muted-foreground sm:flex-row">
-          <div className="flex items-center gap-2">
-            <div className="grid h-7 w-7 place-items-center rounded-md bg-brand text-brand-foreground">
-              <Tag className="h-3.5 w-3.5" />
-            </div>
-            <span className="font-display font-black text-foreground">recardnize</span>
-          </div>
+          <Link to="/" className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+            <BrandLogo className="w-40" />
+          </Link>
           <div className="flex flex-wrap items-center justify-center gap-5">
             <WhatsAppContact message={question}>
             <button type="button" className="hover:text-foreground">

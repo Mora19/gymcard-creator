@@ -1,5 +1,15 @@
 # GymTag: Kontakt- und Rechtshinweis-Korrektur
 
+## Logo A übernommen, 16.11.2026
+
+- Nutzer hat Wortmarke A ausgewählt und Website-Einbau sowie SVG/3D-Modell beauftragt. Neue `BrandLogo`-Komponente verwendet die transparente, aus der freigegebenen Vorlage abgeleitete SVG in Kopf-/Fußzeile sowie Login-/Admin-Kopfzeile. Die bisherige Tag-Kachel entfällt an diesen Stellen. Andere Produkt-/Formular-Icons bleiben bestehen.
+- Headerbreite 136 px mobil / 170 px ab sm, Footer und Admin 160 px. SVG-Intrinsik 1847 × 280; Alternativtext `recardnize`. Keine zusätzliche Schriftabhängigkeit und keine Rastergrafik im Logo.
+- Produktionsdateien unter `brand/`: farbige, für hellen Grund angepasste und einfarbige SVG; geschlossene STL-Reliefs mit 60 und 100 mm Breite; 60-mm-Farbteile in denselben Koordinaten; eigenständige parametrisierbare SCAD-Datei; README, Vorschauen und Prüfnachweis. Web-SVGs unter `src/assets/brand/` sind bytegleiche Kopien der entsprechenden Exporte.
+- Standardmodell: 60 × 9,04065 × 0,6 mm, ohne Basisplatte. Elf getrennte geschlossene Körper (Buchstaben plus i-Punkt) und vier korrekte Innenräume; für das Aufsetzen/Verbinden mit der tatsächlichen Kartenhalteroberfläche vorgesehen. Vor Fertigung Schichtvorschau/Probedruck und Passform prüfen. Das vorhandene Kartenhaltermodell wurde nicht verändert.
+- Build, TypeScript und gezieltes ESLint ohne bestehende globale Formatregel erfolgreich. HTTP liefert Startseite, Login und SVG mit 200; serverseitige Startseite enthält zwei Logo-Bilder, Login eines. Keine neue visuelle Browser-/Geräteabnahme möglich, da lokaler Browserzugriff in dieser Sitzung weiterhin nicht verfügbar ist. SVG-Rendering und STL-Geometrie wurden zusätzlich unabhängig geprüft.
+- Preise, Produktbilder, Bestell-/Kontaktlogik, Supabase und CSV bleiben unverändert; Adminänderung betrifft allein die Logoanzeige. Keine neue Logo-Auswahl im Konfigurator oder neue Backend-Felder.
+- Lovable-Abgleich weiter durch interne Fehler der Lesewerkzeuge blockiert. GitHub-Änderung im verbundenen Branch übernehmen; öffentliche Veröffentlichung und Geräteprüfung bleiben über das bestehende Projekt durchzuführen.
+
 ## Aktualisierung: recardnize, 16.11.2026
 
 - Auf Nutzerentscheidung heißt die sichtbare Marke jetzt **recardnize**. Angepasst wurden Kopf-/Fußzeile, Studio-/Legaltexte, Seitentitel, Social-Metadaten und die reine Admin-Anzeige. Das bisherige Social-Vorschaubild wurde entfernt, bis ein aktuelles Markenmotiv feststeht. Projekt-/Repositorynamen und Bilddateinamen bleiben als technische Kennungen bestehen.

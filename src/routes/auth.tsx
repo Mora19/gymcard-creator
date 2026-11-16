@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { Loader2, Tag } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Admin Login · recardnize" }] }),
@@ -66,10 +67,8 @@ function AuthPage() {
       <Toaster theme="dark" position="top-center" richColors />
       <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6">
         <Link to="/" className="mb-6 inline-flex items-center gap-2">
-          <div className="grid h-8 w-8 place-items-center rounded-md bg-brand text-brand-foreground">
-            <Tag className="h-4 w-4" />
-          </div>
-          <span className="font-display text-lg font-bold uppercase">recardnize · Admin</span>
+          <BrandLogo className="w-40" />
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Admin</span>
         </Link>
         <h1 className="font-display text-2xl font-black uppercase">
           {mode === "login" ? "Login" : "Registrieren"}

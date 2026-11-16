@@ -1,0 +1,293 @@
+{
+  "reference_sha256": "6da57cf2aeea4731e8cdb37eacf5ba626638582cd611d9348a7299a5748fc830",
+  "parameters": {
+    "source_filename": "recardnize-konzept-a-wortmarke.png",
+    "source_sha256": "6da57cf2aeea4731e8cdb37eacf5ba626638582cd611d9348a7299a5748fc830",
+    "source_size_px": [
+      2172,
+      724
+    ],
+    "origin_px": [
+      164,
+      201
+    ],
+    "geometry_size_units": [
+      1845,
+      278
+    ],
+    "viewBox": [
+      -1,
+      -1,
+      1847,
+      280
+    ],
+    "threshold_max_rgb": 120,
+    "min_contour_area_px2": 30,
+    "simplify_tolerance_px": 0.75,
+    "max_boundary_deviation_px": 0.7495316889958743
+  },
+  "tools": {
+    "python": "3.12.14",
+    "numpy": "2.5.5",
+    "opencv": "5.0.0",
+    "shapely": "2.2.0",
+    "trimesh": "5.2.1",
+    "mapbox_earcut": "2.1.0"
+  },
+  "svg": {
+    "path_count": 11,
+    "counter_count": 4,
+    "text_elements": 0,
+    "embedded_raster_images": 0,
+    "background": "transparent",
+    "max_outline_deviation_at_60mm": 0.024375014276288593
+  },
+  "minimum_interpart_gap_at_60mm": {
+    "between": [
+      "r-2",
+      "d"
+    ],
+    "gap_at_60mm": 0.35025462160224413
+  },
+  "color_parts": {
+    "files": [
+      "recardnize-logo-60mm-card.stl",
+      "recardnize-logo-60mm-re-nize.stl"
+    ],
+    "coordinate_system": "Same as combined 60mm STL. Import together as parts; do not auto-center individually."
+  },
+  "stl": [
+    {
+      "filename": "recardnize-logo-60mm.stl",
+      "units": "mm (STL stores unitless coordinates)",
+      "dimensions_mm": [
+        60.0,
+        9.040650367736816,
+        0.6000000238418579
+      ],
+      "volume_mm3": 152.50099508780275,
+      "watertight": true,
+      "consistent_winding": true,
+      "disconnected_solids": 11,
+      "holes": 4,
+      "faces": 1840,
+      "components": [
+        {
+          "id": "r-1",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 10.511838191552647,
+          "faces": 56
+        },
+        {
+          "id": "e-1",
+          "holes": 1,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 0,
+          "volume_mm3": 17.544160222090028,
+          "faces": 296
+        },
+        {
+          "id": "c",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 13.772119769978195,
+          "faces": 264
+        },
+        {
+          "id": "a",
+          "holes": 1,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 0,
+          "volume_mm3": 19.538528653579206,
+          "faces": 288
+        },
+        {
+          "id": "r-2",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 9.303033908387855,
+          "faces": 48
+        },
+        {
+          "id": "d",
+          "holes": 1,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 0,
+          "volume_mm3": 21.71120364862179,
+          "faces": 292
+        },
+        {
+          "id": "n",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 16.282688875669262,
+          "faces": 160
+        },
+        {
+          "id": "i-dot",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 2.0619472536188805,
+          "faces": 72
+        },
+        {
+          "id": "i-stem",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 7.667182232797944,
+          "faces": 40
+        },
+        {
+          "id": "z",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 16.316002379536013,
+          "faces": 56
+        },
+        {
+          "id": "e-2",
+          "holes": 1,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 0,
+          "volume_mm3": 17.79226650803099,
+          "faces": 268
+        }
+      ]
+    },
+    {
+      "filename": "recardnize-logo-100mm.stl",
+      "units": "mm (STL stores unitless coordinates)",
+      "dimensions_mm": [
+        100.0,
+        15.067750930786133,
+        0.6000000238418579
+      ],
+      "volume_mm3": 423.6138259990491,
+      "watertight": true,
+      "consistent_winding": true,
+      "disconnected_solids": 11,
+      "holes": 4,
+      "faces": 1840,
+      "components": [
+        {
+          "id": "r-1",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 29.199550532090687,
+          "faces": 56
+        },
+        {
+          "id": "e-1",
+          "holes": 1,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 0,
+          "volume_mm3": 48.73377839469452,
+          "faces": 296
+        },
+        {
+          "id": "c",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 38.255888249939424,
+          "faces": 264
+        },
+        {
+          "id": "a",
+          "holes": 1,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 0,
+          "volume_mm3": 54.273690704386695,
+          "faces": 288
+        },
+        {
+          "id": "r-2",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 25.841760856632884,
+          "faces": 48
+        },
+        {
+          "id": "d",
+          "holes": 1,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 0,
+          "volume_mm3": 60.308899023949756,
+          "faces": 292
+        },
+        {
+          "id": "n",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 45.229691321303356,
+          "faces": 160
+        },
+        {
+          "id": "i-dot",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 5.727631260052445,
+          "faces": 72
+        },
+        {
+          "id": "i-stem",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 21.297728424438684,
+          "faces": 40
+        },
+        {
+          "id": "z",
+          "holes": 0,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 2,
+          "volume_mm3": 45.32222883204442,
+          "faces": 56
+        },
+        {
+          "id": "e-2",
+          "holes": 1,
+          "watertight": true,
+          "consistent_winding": true,
+          "euler_number": 0,
+          "volume_mm3": 49.422962522308126,
+          "faces": 268
+        }
+      ]
+    }
+  ]
+}

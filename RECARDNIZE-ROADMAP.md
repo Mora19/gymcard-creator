@@ -5,6 +5,7 @@ Stand: 16.11.2026. Diese Datei hält die Nutzerideen dauerhaft im Repository fes
 ## Bestätigte Entscheidungen
 
 - Markenname: **recardnize**, statt GymTag. Zunächst „recardnize Kartenhalter“ als Produktbezeichnung; keine zusätzliche Produktmarke erforderlich. Name bewusst für spätere Anwendungen außerhalb des Gyms offenhalten.
+- Logo: Moritz hat **Entwurf A** ausgewählt – reine geometrische Wortmarke, „re“/„nize“ hell und „card“ rot. Die ausgewählte Form wird als Vektor in die Website übernommen und für CAD/3D-Druck aufbereitet.
 - `recardnize.com` hat Moritz nach eigener Auskunft bei IONOS registriert. Domainkontostatus, Verlängerung, DNS und Markenrechte sind hier nicht geprüft.
 - E-Mail in Auswahl: `hello@recardnize.com` oder `contact@recardnize.com`. Empfehlung: hello@ als Hauptkontakt. Moritz bestätigt am 16.11.2026: noch nicht eingerichtet. Die Website behält die bestätigte bisherige Adresse, bis Einrichtung und Empfang/Versand bestätigt sind.
 - Ansprechpartner und alleiniger Anbieter: Moritz Klösters. Veröffentlichbare vollständige Anschrift und abschließende Datenschutzangaben fehlen weiterhin.
@@ -15,13 +16,13 @@ Stand: 16.11.2026. Diese Datei hält die Nutzerideen dauerhaft im Repository fes
 - Sichtbare Marke und Seitentitel auf recardnize umgestellt, auch Studio-Anfrage, Impressum/Datenschutz und Admin-Anzeige. Bilddateinamen, Backend und Auftragsdaten bleiben bestehen.
 - Studio-Bereich um konkrete Alltagssituationen und einen gemeinsam abzustimmenden kleinen Praxistest ergänzt. Keine bestehende Kooperation, Mengen, Lieferfähigkeit, kostenlose Muster oder nachgewiesene Verlustreduktion behauptet.
 - WhatsApp bietet bewusst Browser oder installierte App an. App-Link ohne neues Fenster; Browser-Link direkt zu WhatsApp Web. Nummer und Nachricht sind zusätzlich kopierbar, bei blockierter Zwischenablage manuell auswählbar. Kein automatisches Öffnen nach Bestellung, kein automatischer Nachrichtenversand.
-- Vier Logo-Richtungen als Bildkonzepte im lokalen Ordner `../recardnize-logo-konzepte/`. Noch kein ausgewähltes Logo und keine finale Druckdatei.
+- Vier Logo-Richtungen als Bildkonzepte im lokalen Ordner `../recardnize-logo-konzepte/`; **A ist ausgewählt**. Verwendbare Vektor- und Modelldateien sowie Maße/Druckhinweise werden unter `brand/` dokumentiert.
 
 ## Vor dem ersten Website-Link an Fitness First
 
 | Schritt | Verantwortlich / Stand | Zweck |
 | --- | --- | --- |
-| Logo-Richtung auswählen | Moritz; offen | Einprägsame Wortmarke und ggf. kleines Signet festlegen |
+| Logo-Richtung auswählen | Moritz; A ausgewählt | Wortmarke als SVG und flaches Modell ausarbeiten; Probedruck am Halter |
 | Postfach einrichten und testen | Moritz; Bestätigung offen | E-Mail empfangen, beantworten und von externer Adresse testen; Absendername und Signatur |
 | Domain absichern | Moritz / IONOS; nicht im Konto geprüft | 2FA, aktuelle Zahlungs-/Inhaberdaten, Verlängerung, Transfer Lock; Auth-Code privat halten |
 | Betreiber-/Datenschutzangaben vervollständigen | Moritz; Anschrift und kontospezifische Angaben fehlen | Öffentliche Seite und tatsächliche Datenerhebung korrekt beschreiben |

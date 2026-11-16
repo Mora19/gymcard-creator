@@ -6,7 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { Download, LogOut, RefreshCw, Tag } from "lucide-react";
+import { Download, LogOut, RefreshCw } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin · recardnize Bestellungen" }] }),
@@ -130,10 +131,8 @@ function AdminPage() {
       <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
           <Link to="/" className="flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-md bg-brand text-brand-foreground">
-              <Tag className="h-4 w-4" />
-            </div>
-            <span className="font-display text-lg font-bold uppercase">recardnize · Admin</span>
+            <BrandLogo className="w-40" />
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Admin</span>
           </Link>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
