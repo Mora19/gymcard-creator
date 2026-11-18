@@ -99,6 +99,7 @@ type HolderLogo = (typeof HOLDER_LOGOS)[number]["value"];
 function LandingPage() {
   // Configurator state
   const [holderLogo, setHolderLogo] = useState<HolderLogo>("none");
+  const [logoChoiceReady, setLogoChoiceReady] = useState(false);
   const [withName, setWithName] = useState(true);
   const [name, setName] = useState("");
   const [withPhoneOnHolder, setWithPhoneOnHolder] = useState(false);
@@ -123,6 +124,10 @@ function LandingPage() {
     details: { label: string; value: string; bold?: boolean }[];
   } | null>(null);
   const submitLock = useRef(false);
+
+  useEffect(() => {
+    setLogoChoiceReady(true);
+  }, []);
 
   const unitPriceCents = useMemo(() => {
     let p = BASE_PRICE;
@@ -464,7 +469,10 @@ function LandingPage() {
                     className="bg-background"
                   />
                 )}
-                <fieldset disabled={submitting || !!submitted} className="space-y-2">
+                <fieldset
+                  disabled={!logoChoiceReady || submitting || !!submitted}
+                  className="space-y-2 disabled:opacity-60"
+                >
                   <legend className="mb-2 text-sm font-semibold">Logo auf dem Halter</legend>
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                     {HOLDER_LOGOS.map(({ value, label }) => (

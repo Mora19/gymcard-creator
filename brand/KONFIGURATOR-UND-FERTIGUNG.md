@@ -29,7 +29,7 @@ Den bestehenden CSV-Import weiter mit `orders.csv` betreiben. Für `orders-recar
 3. In der Testversion alle drei Optionen ohne und mit Band bestellen. In Admin bzw. Datenbank 499/599 Cent je Stück und Logo-Auswahl prüfen. Beide CSVs im tatsächlichen Fertigungsskript testen. Die CSV-Dateien enthalten keine Preis-Spalte.
 4. Sobald der Drucktest und die Tests in Staging erfolgreich sind, die additive Migration für die produktive Datenbank freigeben und danach den Branch veröffentlichen. Bei einem späteren Rollback müssen recardnize-Aufträge weiterhin im neuen Export oder separat erfasst werden, bevor ein alter Admin-Stand wieder verwendet wird.
 
-Lokal geprüft wurden Browser-Vorschau, Logo-Umschaltung, Preis und CSV-Kompatibilität. Die Migration lief in lokalem PostgreSQL mit Testdaten und einer nachgebildeten serverseitigen Preisfunktion. Der Zugriff auf die Lovable-Datenbank war in dieser Sitzung wegen eines internen Verbindungsfehlers nicht verfügbar.
+Geprüft wurden alle drei Varianten im Browser bis zur Bestellbestätigung mit einer lokalen Test-API. Die Migration lief separat in lokalem PostgreSQL mit Testdaten und einer nachgebildeten serverseitigen Preisfunktion. Der Zugriff auf die Lovable-Datenbank war in dieser Sitzung wegen eines internen Verbindungsfehlers nicht verfügbar.
 
 ## Eigene Website-Domain
 

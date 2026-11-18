@@ -34,7 +34,17 @@ export const submitOrder = createServerFn({ method: "POST" })
     const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
     const supabase = createClient(url, key, {
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
-      global: { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+      global: {
+        fetch: (input, init) => {
+          const headers = new Headers(init?.headers);
+          // The SDK may reuse the API key as the anonymous bearer token.
+          // Publishable keys belong in apikey and are not JWTs.
+          if (key.startsWith("sb_publishable_") && headers.get("authorization") === `Bearer ${key}`) {
+            headers.delete("authorization");
+          }
+          return fetch(input, { ...init, headers });
+        },
+      },
     });
 
     const payload = {
