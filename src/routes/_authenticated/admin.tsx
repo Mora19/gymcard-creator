@@ -43,7 +43,7 @@ function csvEscape(value: string | number | boolean | null | undefined) {
   return clean;
 }
 
-function orderToCsvRow(o: AdminOrder) {
+function orderToCsvRow(o: AdminOrder, forRecardnize: boolean) {
   return [
     o.order_number ?? "",
     o.contact_name,
@@ -62,18 +62,20 @@ function orderToCsvRow(o: AdminOrder) {
     o.paid ? "true" : "false",
     o.status,
     o.note ?? "",
+    ...(forRecardnize ? ["recardnize"] : []),
   ]
     .map(csvEscape)
     .join(";");
 }
 
-function downloadCsv(orders: AdminOrder[]) {
-  const lines = [CSV_HEADERS.join(";"), ...orders.map(orderToCsvRow)];
+function downloadCsv(orders: AdminOrder[], forRecardnize = false) {
+  const headers = forRecardnize ? [...CSV_HEADERS, "logo_variant"] : CSV_HEADERS;
+  const lines = [headers.join(";"), ...orders.map((order) => orderToCsvRow(order, forRecardnize))];
   const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `orders.csv`;
+  a.download = forRecardnize ? "orders-recardnize.csv" : "orders.csv";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -124,6 +126,8 @@ function AdminPage() {
   }
 
   const orders = data ?? [];
+  const standardOrders = orders.filter((order) => !order.with_recardnize_logo);
+  const recardnizeOrders = orders.filter((order) => order.with_recardnize_logo);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -140,11 +144,11 @@ function AdminPage() {
             </Button>
             <Button
               size="sm"
-              onClick={() => downloadCsv(orders)}
-              disabled={orders.length === 0}
+              onClick={() => downloadCsv(standardOrders)}
+              disabled={standardOrders.length === 0}
               className="bg-brand text-brand-foreground hover:bg-brand/90"
             >
-              <Download className="mr-2 h-4 w-4" /> CSV exportieren
+              <Download className="mr-2 h-4 w-4" /> CSV Standard / Studio
             </Button>
             <Button size="sm" variant="ghost" onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" /> Logout
@@ -158,6 +162,16 @@ function AdminPage() {
           <h1 className="font-display text-3xl font-black uppercase">Bestellungen</h1>
           <span className="text-sm text-muted-foreground">{orders.length} Einträge</span>
         </div>
+        {recardnizeOrders.length > 0 && (
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <Button size="sm" variant="outline" onClick={() => downloadCsv(recardnizeOrders, true)}>
+              <Download className="h-4 w-4" /> CSV recardnize
+            </Button>
+            <p className="text-sm text-muted-foreground">
+              recardnize-Aufträge haben einen eigenen Export für die Fertigung.
+            </p>
+          </div>
+        )}
 
         {isLoading && <div className="text-sm text-muted-foreground">Lade…</div>}
         {isError && (
@@ -202,6 +216,7 @@ function AdminPage() {
                       <div className="font-medium">{o.name_on_holder ? o.holder_name : <span className="text-muted-foreground">– kein Name –</span>}</div>
                       {o.phone_on_holder && <div className="text-xs text-muted-foreground">Tel: {o.holder_phone}</div>}
                       {o.with_logo && <div className="text-xs text-brand">+ Logo</div>}
+                      {o.with_recardnize_logo && <div className="text-xs text-brand">+ recardnize</div>}
                     </td>
                     <td className="px-3 py-3 text-xs">
                       <div>Halter: {o.holder_color}</div>

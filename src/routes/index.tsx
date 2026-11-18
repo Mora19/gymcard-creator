@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   CreditCard,
@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import productFront from "@/assets/gymtag-front-transparent.png";
 import productOpen from "@/assets/gymtag-open-transparent.png";
+import recardnizePrintLogo from "@/assets/brand/recardnize-logo-mono.svg";
 import { submitOrder } from "@/lib/orders.functions";
 import { CONTACT_EMAIL, getWhatsAppWebUrl } from "@/lib/contact";
 import { CopyTextButton } from "@/components/CopyTextButton";
@@ -87,13 +88,21 @@ const BAND_PRICE = 100;
 const PHONE_PRICE = 0;
 const LOGO_PRICE = 0;
 
+const HOLDER_LOGOS = [
+  { value: "none", label: "Ohne Logo" },
+  { value: "studio", label: "Studio-Logo" },
+  { value: "recardnize", label: "recardnize" },
+] as const;
+
+type HolderLogo = (typeof HOLDER_LOGOS)[number]["value"];
+
 function LandingPage() {
   // Configurator state
-  const [withLogo, setWithLogo] = useState(false);
+  const [holderLogo, setHolderLogo] = useState<HolderLogo>("none");
   const [withName, setWithName] = useState(true);
-  const [name, setName] = useState("Max Mustermann");
-  const [withPhoneOnHolder, setWithPhoneOnHolder] = useState(true);
-  const [phoneOnHolder, setPhoneOnHolder] = useState("0170 1234567");
+  const [name, setName] = useState("");
+  const [withPhoneOnHolder, setWithPhoneOnHolder] = useState(false);
+  const [phoneOnHolder, setPhoneOnHolder] = useState("");
   const [holderColor, setHolderColor] = useState<HolderColor>("Schwarz");
   const [textColor, setTextColor] = useState<TextColor>("Rot");
   const [withBand, setWithBand] = useState(false);
@@ -108,16 +117,20 @@ function LandingPage() {
   const [note, setNote] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState<{ summary: string; orderNumber?: string | null } | null>(null);
+  const [submitted, setSubmitted] = useState<{
+    summary: string;
+    orderNumber?: string | null;
+    details: { label: string; value: string; bold?: boolean }[];
+  } | null>(null);
   const submitLock = useRef(false);
 
   const unitPriceCents = useMemo(() => {
     let p = BASE_PRICE;
     if (withBand) p += BAND_PRICE;
     if (withPhoneOnHolder) p += PHONE_PRICE;
-    if (withLogo) p += LOGO_PRICE;
+    if (holderLogo !== "none") p += LOGO_PRICE;
     return p;
-  }, [withBand, withPhoneOnHolder, withLogo]);
+  }, [withBand, withPhoneOnHolder, holderLogo]);
   const priceCents = unitPriceCents * quantity;
 
   // Prevent identical holder + text color (no contrast)
@@ -143,6 +156,10 @@ function LandingPage() {
       toast.error("Bitte fülle Name, WhatsApp-Nummer und Wunschort für die Übergabe aus.");
       return;
     }
+    if ((withName && !name.trim()) || (withPhoneOnHolder && !phoneOnHolder.trim())) {
+      toast.error("Bitte gib den gewählten Aufdruck ein oder schalte die Option aus.");
+      return;
+    }
     if (submitLock.current || submitted) return;
     submitLock.current = true;
     setSubmitting(true);
@@ -160,7 +177,8 @@ function LandingPage() {
           holder_name: withName ? name : "",
           phone_on_holder: withPhoneOnHolder,
           holder_phone: withPhoneOnHolder ? phoneOnHolder : "",
-          with_logo: withLogo,
+          with_logo: holderLogo === "studio",
+          with_recardnize_logo: holderLogo === "recardnize",
           with_band: withBand,
           band_color: withBand ? bandColor : "",
           quantity,
@@ -178,14 +196,29 @@ function LandingPage() {
         `Halter: ${holderColor}, Text: ${textColor}`,
         withName ? `Name auf Halter: ${name}` : "Ohne Name",
         withPhoneOnHolder ? `Tel auf Halter: ${phoneOnHolder}` : null,
-        withLogo ? "Mit Studio-Logo (sofern freigegeben)" : null,
+        holderLogo === "studio" ? "Mit Studio-Logo (sofern freigegeben)" : null,
+        holderLogo === "recardnize" ? "Mit recardnize-Logo" : null,
         withBand ? `Band: ${bandColor}` : "Ohne Band",
         `Gesamtpreis: ${formatPrice(priceCents)}`,
         note ? `Notiz: ${note}` : null,
       ]
         .filter(Boolean)
         .join("\n");
-      setSubmitted({ summary, orderNumber: res?.order_number ?? null });
+      setSubmitted({
+        summary,
+        orderNumber: res?.order_number ?? null,
+        details: [
+          { label: "Kunde", value: contactName.trim() },
+          ...(withName ? [{ label: "Name auf Halter", value: name.trim() }] : []),
+          ...(withPhoneOnHolder ? [{ label: "Tel auf Halter", value: phoneOnHolder.trim() }] : []),
+          { label: "Halterfarbe", value: holderColor },
+          { label: "Textfarbe", value: textColor },
+          { label: "Logo", value: HOLDER_LOGOS.find(({ value }) => value === holderLogo)?.label ?? "Ohne Logo" },
+          { label: "Band", value: withBand ? `ja · ${bandColor}` : "nein" },
+          { label: "Stückzahl", value: String(quantity) },
+          { label: "Gesamtpreis", value: formatPrice(priceCents), bold: true },
+        ],
+      });
       toast.success("Bestellung gespeichert! Wir melden uns per WhatsApp.");
       setTimeout(() => {
         document
@@ -380,7 +413,7 @@ function LandingPage() {
                   name={name}
                   withPhone={withPhoneOnHolder}
                   phone={phoneOnHolder}
-                  withLogo={withLogo}
+                  logo={holderLogo}
                   withBand={withBand}
                   bandColor={bandColor}
                 />
@@ -405,6 +438,8 @@ function LandingPage() {
                 {withName && (
                   <Input
                     placeholder="z. B. Max Mustermann"
+                    aria-label="Name für den Aufdruck"
+                    required={!submitted}
                     value={name}
                     onChange={(e) => setName(e.target.value.slice(0, 22))}
                     maxLength={22}
@@ -421,17 +456,37 @@ function LandingPage() {
                 {withPhoneOnHolder && (
                   <Input
                     placeholder="z. B. 0170 1234567"
+                    aria-label="Telefonnummer für den Aufdruck"
+                    type="tel"
+                    required={!submitted}
                     value={phoneOnHolder}
                     onChange={(e) => setPhoneOnHolder(e.target.value.slice(0, 25))}
                     className="bg-background"
                   />
                 )}
-                <ToggleRow
-                  label="Studio-Logo"
-                  hint="Studio-Logo nur mit offizieller Freigabe möglich (z. B. Fitness First)."
-                  checked={withLogo}
-                  onChange={setWithLogo}
-                />
+                <fieldset disabled={submitting || !!submitted} className="space-y-2">
+                  <legend className="mb-2 text-sm font-semibold">Logo auf dem Halter</legend>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                    {HOLDER_LOGOS.map(({ value, label }) => (
+                      <label key={value} className="relative cursor-pointer">
+                        <input
+                          type="radio"
+                          name="holder-logo"
+                          value={value}
+                          checked={holderLogo === value}
+                          onChange={() => setHolderLogo(value)}
+                          className="peer sr-only"
+                        />
+                        <span className="block rounded-md border border-border bg-background px-3 py-2 text-center text-sm peer-checked:border-brand peer-checked:bg-brand/10 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand">
+                          {label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Studio-Logos brauchen eine Freigabe. recardnize wird in deiner gewählten Textfarbe gedruckt.
+                  </p>
+                </fieldset>
               </ConfigCard>
 
               <ConfigCard title="Look">
@@ -584,14 +639,9 @@ function LandingPage() {
                     <p className="mt-1 font-mono text-sm text-brand">Bestell-Nr. {submitted.orderNumber}</p>
                   )}
                   <div className="mx-auto mt-4 max-w-sm space-y-1 rounded-md border border-border bg-background/40 p-4 text-left text-sm">
-                    <SummaryRow k="Kunde" v={contactName} />
-                    {withName && <SummaryRow k="Name auf Halter" v={name} />}
-                    {withPhoneOnHolder && <SummaryRow k="Tel auf Halter" v={phoneOnHolder} />}
-                    <SummaryRow k="Halterfarbe" v={holderColor} />
-                    <SummaryRow k="Textfarbe" v={textColor} />
-                    <SummaryRow k="Band" v={withBand ? `ja · ${bandColor}` : "nein"} />
-                    <SummaryRow k="Stückzahl" v={String(quantity)} />
-                    <SummaryRow k="Gesamtpreis" v={formatPrice(priceCents)} bold />
+                    {submitted.details.map(({label, value, bold}) => (
+                      <SummaryRow key={label} k={label} v={value} bold={bold} />
+                    ))}
                   </div>
                   <p className="mt-4 text-sm text-muted-foreground">
                     Deine Bestellung ist bereits bei uns gespeichert – du musst nichts weiter tun. Wir melden uns per WhatsApp mit den Details zur Übergabe.
@@ -722,6 +772,7 @@ function LandingPage() {
             <PriceRow label="Band für die Flasche" value="+1,00 €" />
             <PriceRow label="Telefonnummer auf Halter" value="inklusive" />
             <PriceRow label="Studio-Logo (mit Freigabe)" value="inklusive" />
+            <PriceRow label="recardnize-Logo" value="inklusive" />
             <PriceRow label="Weitere Extras auf Anfrage" value="—" muted />
           </div>
           <Button
@@ -981,7 +1032,7 @@ function HolderPreview({
   name,
   withPhone,
   phone,
-  withLogo,
+  logo,
   withBand,
   bandColor,
 }: {
@@ -991,10 +1042,11 @@ function HolderPreview({
   name: string;
   withPhone: boolean;
   phone: string;
-  withLogo: boolean;
+  logo: HolderLogo;
   withBand: boolean;
   bandColor: BandColor;
 }) {
+  const recardnizeMaskId = useId();
   const holderHex = HOLDER_HEX[holderColor];
   const textHex = TEXT_HEX[textColor];
   const bandHex = BAND_HEX[bandColor];
@@ -1003,8 +1055,8 @@ function HolderPreview({
   // 3D-print line texture
   const textureLines = Array.from({ length: 46 }, (_, i) => 28 + i * 6);
 
-  const displayName = (name || "Dein Name").slice(0, 22);
-  const displayPhone = phone || "0170 1234567";
+  const displayName = (name.trim() || "Dein Name").slice(0, 22);
+  const displayPhone = phone.trim() || "Deine Nummer";
 
   // Card body: x=58, w=278 → interior 58..336. Left text baseline:
   const X_LEFT = 86;
@@ -1123,7 +1175,7 @@ function HolderPreview({
         )}
 
         {/* ZONE 2 — LOGO row (middle, left-aligned): F block + "Fitness First" */}
-        {withLogo && (
+        {logo === "studio" && (
           <g filter="url(#raised)">
             {/* F block */}
             <g transform={`translate(${X_LEFT}, ${Y_LOGO - 32})`}>
@@ -1156,6 +1208,30 @@ function HolderPreview({
           </g>
         )}
 
+        {logo === "recardnize" && (
+          <g>
+            <mask
+              id={recardnizeMaskId}
+              x={X_LEFT}
+              y={Y_LOGO - 30}
+              width="198"
+              height="30"
+              maskUnits="userSpaceOnUse"
+              style={{ maskType: "alpha" }}
+            >
+              <image href={recardnizePrintLogo} x={X_LEFT} y={Y_LOGO - 30} width="198" height="30" />
+            </mask>
+            <rect
+              x={X_LEFT}
+              y={Y_LOGO - 30}
+              width="198"
+              height="30"
+              fill={textHex}
+              mask={`url(#${recardnizeMaskId})`}
+            />
+          </g>
+        )}
+
         {/* ZONE 3 — PHONE (bottom, left-aligned) */}
         {withPhone && (
           <g filter="url(#raised)">
@@ -1174,7 +1250,7 @@ function HolderPreview({
           </g>
         )}
 
-        {!withName && !withPhone && !withLogo && (
+        {!withName && !withPhone && logo === "none" && (
           <text
             x="197"
             y="158"
@@ -1195,7 +1271,7 @@ function HolderPreview({
         <div className="text-xs text-muted-foreground">
           Live-Vorschau · echte 3D-Druck-Optik
         </div>
-        {withLogo && (
+        {logo === "studio" && (
           <div className="text-[11px] text-muted-foreground/80">
             Studio-Logo nur mit offizieller Freigabe möglich.
           </div>

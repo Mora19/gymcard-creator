@@ -38,6 +38,7 @@ export type Database = {
           text_color: string
           with_band: boolean
           with_logo: boolean
+          with_recardnize_logo: boolean
         }
         Insert: {
           band_color?: string | null
@@ -62,6 +63,7 @@ export type Database = {
           text_color: string
           with_band?: boolean
           with_logo?: boolean
+          with_recardnize_logo?: boolean
         }
         Update: {
           band_color?: string | null
@@ -86,6 +88,7 @@ export type Database = {
           text_color?: string
           with_band?: boolean
           with_logo?: boolean
+          with_recardnize_logo?: boolean
         }
         Relationships: []
       }
@@ -116,6 +119,13 @@ export type Database = {
     }
     Functions: {
       create_order: {
+        Args: { payload: Json }
+        Returns: {
+          order_number: string
+          status: string
+        }[]
+      }
+      create_order_with_recardnize_logo: {
         Args: { payload: Json }
         Returns: {
           order_number: string

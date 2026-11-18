@@ -71,7 +71,7 @@ Stand: 23.10.2026. Ausgangscommit: `4cf4cc63aa9c21a579a555c3462ebded3e89a867`.
 3. **Vor regulärer Nutzung:** fehlende Informationen prüfen und die beiden Seiten vervollständigen; auch für aktuelle Datenerhebung gelten die Informationspflichten.
 4. **Öffentliche Version aktualisieren:** im bestehenden Lovable-Projekt den synchronisierten Stand prüfen und über Publish/Update veröffentlichen. Danach die bisherige öffentliche Adresse und beide Rechtshinweis-URLs direkt aufrufen.
 5. **Am echten Gerät:** über den vorhandenen QR-Code öffnen; Desktop-Link, Android/iPhone mit installierter App und die Web-/E-Mail-Ausweichlinks prüfen. Mobil ohne App muss ein Ausweichkontakt weiterhin erreichbar sein. WhatsApp Web kann eine Anmeldung oder Gerätekopplung verlangen.
-6. **Betreiber-Testbestellung:** einmal ohne/mit Band bestellen, Bestätigung/Bestellnummer und Admin prüfen; CSV muss 499/599 Cent pro Stück ausweisen. Testauftrag anschließend im Admin als storniert markieren. Dies verändert Bestelldaten und wurde hier dem Betreiber überlassen.
+6. **Betreiber-Testbestellung:** einmal ohne/mit Band bestellen, Bestätigung/Bestellnummer und 499/599 Cent pro Stück im Admin prüfen. CSV auf die exportierten Konfigurationsdaten prüfen. Testauftrag anschließend im Admin als storniert markieren. Dies verändert Bestelldaten und wurde hier dem Betreiber überlassen.
 
 ## Primärquellen für die noch zu vervollständigenden Angaben
 

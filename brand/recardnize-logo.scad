@@ -1,13 +1,17 @@
 // Recardnize: approved concept A, contour-derived geometry; units: mm.
 // No font required. No backing plate. Separate letters and i-dot are intentional.
 // Change logo_width and relief_height, then render (F6) and export STL.
+// Library use: use <recardnize-logo.scad>; recardnize_logo(width=60, height=0.4);
 logo_width = 60;
 relief_height = 0.6;
 source_width = 1845;
 source_height = 278;
-assert(logo_width > 0 && relief_height > 0, "Positive mm dimensions required");
-linear_extrude(height = relief_height, convexity = 10)
-  scale([logo_width/source_width, logo_width/source_width])
+
+// Dimensions are explicit module parameters; use imports need no global variables.
+module recardnize_logo(width = 60, height = 0.4) {
+  assert(width > 0 && height > 0, "Positive mm dimensions required");
+  linear_extrude(height = height, convexity = 10)
+    scale([width/1845, width/1845])
     union() {
       // r-1
       polygon(points=[[149.0,198.0],[37.0,198.0],[1.0,163.0],[0.0,161.0],[0.0,4.0],[64.0,4.0],[64.0,124.0],[84.0,143.0],[142.0,143.0],[145.0,147.0],[145.0,151.0],[147.0,156.0],[149.0,179.0],[151.0,187.0],[151.0,195.0]], paths=[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]], convexity=10);
@@ -32,3 +36,7 @@ linear_extrude(height = relief_height, convexity = 10)
       // e-2
       polygon(points=[[1683.0,186.0],[1673.0,179.0],[1656.0,161.0],[1645.0,141.0],[1639.0,121.0],[1639.0,115.0],[1638.0,114.0],[1638.0,87.0],[1645.0,61.0],[1651.0,49.0],[1661.0,35.0],[1672.0,24.0],[1688.0,13.0],[1710.0,4.0],[1723.0,1.0],[1729.0,1.0],[1730.0,0.0],[1764.0,0.0],[1765.0,1.0],[1784.0,2.0],[1785.0,3.0],[1791.0,3.0],[1799.0,5.0],[1842.0,49.0],[1842.0,64.0],[1840.0,65.0],[1786.0,65.0],[1775.0,54.0],[1768.0,54.0],[1761.0,51.0],[1751.0,50.0],[1750.0,49.0],[1732.0,50.0],[1722.0,53.0],[1712.0,59.0],[1702.0,69.0],[1697.0,78.0],[1696.0,83.0],[1697.0,84.0],[1843.0,84.0],[1844.0,85.0],[1844.0,93.0],[1845.0,94.0],[1844.0,122.0],[1838.0,144.0],[1829.0,161.0],[1815.0,177.0],[1800.0,188.0],[1786.0,195.0],[1765.0,201.0],[1749.0,202.0],[1748.0,203.0],[1721.0,201.0],[1703.0,196.0],[1696.0,124.0],[1702.0,137.0],[1713.0,148.0],[1722.0,153.0],[1731.0,156.0],[1751.0,157.0],[1763.0,154.0],[1775.0,147.0],[1785.0,136.0],[1789.0,128.0],[1790.0,123.0],[1789.0,122.0],[1697.0,122.0]], paths=[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53],[54,55,56,57,58,59,60,61,62,63,64,65,66]], convexity=10);
     }
+}
+
+// Standalone defaults stay at the original 60 x 9.04065 x 0.6 mm.
+recardnize_logo(width = logo_width, height = relief_height);

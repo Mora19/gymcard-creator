@@ -1,0 +1,109 @@
+{
+  "openscad_version": "OpenSCAD version 2021.01",
+  "standalone_unchanged_0_6mm": {
+    "bounds_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        60.0,
+        9.04065,
+        0.6
+      ]
+    ],
+    "dimensions_mm": [
+      60.0,
+      9.04065,
+      0.6
+    ],
+    "volume_mm3": 152.50127786585526,
+    "watertight": true,
+    "consistent_winding": true,
+    "solids": 11,
+    "through_holes": 4,
+    "faces": 1840,
+    "warnings": false,
+    "diagnostics": [
+      "Geometries in cache: 14",
+      "Geometry cache size in bytes: 156040",
+      "CGAL Polyhedrons in cache: 0",
+      "CGAL cache size in bytes: 0",
+      "Total rendering time: 0:00:00.006",
+      "   Top level object is a 3D object:",
+      "   Facets:       1840"
+    ]
+  },
+  "added_0_4mm_stl": {
+    "filename": "recardnize-logo-60mm-0.4mm.stl",
+    "bounds_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        60.0,
+        9.040650367736816,
+        0.4000000059604645
+      ]
+    ],
+    "dimensions_mm": [
+      60.0,
+      9.040650367736816,
+      0.4000000059604645
+    ],
+    "volume_mm3": 101.66732753359979,
+    "watertight": true,
+    "consistent_winding": true,
+    "solids": 11,
+    "through_holes": 4,
+    "faces": 1840,
+    "warnings": false,
+    "diagnostics": [
+      "Geometries in cache: 14",
+      "Geometry cache size in bytes: 156040",
+      "CGAL Polyhedrons in cache: 0",
+      "CGAL cache size in bytes: 0",
+      "Total rendering time: 0:00:00.005",
+      "   Top level object is a 3D object:",
+      "   Facets:       1840"
+    ]
+  },
+  "use_module_30mm_offset": {
+    "bounds_mm": [
+      [
+        3.0,
+        5.0,
+        2.0
+      ],
+      [
+        33.0,
+        9.52033,
+        2.4
+      ]
+    ],
+    "dimensions_mm": [
+      30.0,
+      4.5203299999999995,
+      0.3999999999999999
+    ],
+    "volume_mm3": 25.416819295720018,
+    "watertight": true,
+    "consistent_winding": true,
+    "solids": 11,
+    "through_holes": 4,
+    "faces": 1840,
+    "warnings": false,
+    "diagnostics": [
+      "Geometries in cache: 15",
+      "Geometry cache size in bytes: 288632",
+      "CGAL Polyhedrons in cache: 0",
+      "CGAL cache size in bytes: 0",
+      "Total rendering time: 0:00:00.007",
+      "   Top level object is a 3D object:",
+      "   Facets:       1840"
+    ]
+  }
+}

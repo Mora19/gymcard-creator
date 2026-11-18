@@ -15,11 +15,15 @@ const orderSchema = z.object({
   phone_on_holder: z.boolean(),
   holder_phone: z.string().trim().max(40).optional().or(z.literal("")),
   with_logo: z.boolean(),
+  with_recardnize_logo: z.boolean().default(false),
   with_band: z.boolean(),
   band_color: z.enum(["Rot", "Schwarz", "Weiß"]).optional().or(z.literal("")),
   quantity: z.number().int().min(1).max(99),
   // Ignored: the binding price is computed server-side in create_order.
   price_cents: z.number().int().nonnegative().optional(),
+}).refine((order) => !order.with_logo || !order.with_recardnize_logo, {
+  message: "Bitte wähle nur ein Logo.",
+  path: ["with_recardnize_logo"],
 });
 
 export const submitOrder = createServerFn({ method: "POST" })
@@ -51,8 +55,9 @@ export const submitOrder = createServerFn({ method: "POST" })
       quantity: data.quantity,
     };
 
+    const procedure = data.with_recardnize_logo ? "create_order_with_recardnize_logo" : "create_order";
     const { data: row, error } = await supabase
-      .rpc("create_order", { payload })
+      .rpc(procedure, { payload })
       .single();
 
     if (error) {
@@ -75,6 +80,7 @@ export type AdminOrder = {
   name_on_holder: boolean;
   phone_on_holder: boolean;
   with_logo: boolean;
+  with_recardnize_logo?: boolean;
   holder_color: string;
   text_color: string;
   with_band: boolean;

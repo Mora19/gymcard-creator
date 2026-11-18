@@ -58,13 +58,17 @@ def scad_document(glyphs, width, height):
         "// Recardnize: approved concept A, contour-derived geometry; units: mm.",
         "// No font required. No backing plate. Separate letters and i-dot are intentional.",
         "// Change logo_width and relief_height, then render (F6) and export STL.",
+        "// Library use: use <recardnize-logo.scad>; recardnize_logo(width=60, height=0.4);",
         "logo_width = 60;",
         "relief_height = 0.6;",
         f"source_width = {width:g};",
         f"source_height = {height:g};",
-        'assert(logo_width > 0 && relief_height > 0, "Positive mm dimensions required");',
-        "linear_extrude(height = relief_height, convexity = 10)",
-        "  scale([logo_width/source_width, logo_width/source_width])",
+        "",
+        "// Dimensions are explicit module parameters; use imports need no global variables.",
+        "module recardnize_logo(width = 60, height = 0.4) {",
+        '  assert(width > 0 && height > 0, "Positive mm dimensions required");',
+        "  linear_extrude(height = height, convexity = 10)",
+        f"    scale([width/{width:g}, width/{width:g}])",
         "    union() {",
     ]
     for glyph in glyphs:
@@ -80,6 +84,10 @@ def scad_document(glyphs, width, height):
             '      polygon(points=' + json.dumps(flat, separators=(",", ":")) + ', paths=' + json.dumps(paths, separators=(",", ":")) + ', convexity=10);',
         ]
     lines.append('    }')
+    lines.append('}')
+    lines.append('')
+    lines.append('// Standalone defaults stay at the original 60 x 9.04065 x 0.6 mm.')
+    lines.append('recardnize_logo(width = logo_width, height = relief_height);')
     return "\n".join(lines) + "\n"
 
 
