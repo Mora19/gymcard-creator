@@ -1,14 +1,14 @@
 # recardnize im Karten-Konfigurator und in der Fertigung
 
-Stand 18.11.2026. Der Konfigurator ist im Branch `recardnize-logo-configurator` vorbereitet. Der bisherige Produktionsstand ist weiterhin `main`.
+Stand 20.11.2026. Der Konfigurator ist im Branch `recardnize-logo-configurator` vorbereitet. Der bisherige Produktionsstand ist weiterhin `main`.
 
 ## 1. OpenSCAD am bestehenden Halter ergänzen
 
-1. Die aktuelle Kartenhalter-SCAD samt eingebundenen Dateien und dem bisherigen Exportskript kopieren. Mit der unveränderten Fitness-First-Auswahl eine Referenz-STL bzw. die vorhandenen Materialteile exportieren. Dieselbe Druckausrichtung und dasselbe Slicer-Profil für den Vergleich nehmen.
-2. [recardnize-logo.scad](recardnize-logo.scad) neben die Haupt-SCAD der Kopie legen. In der Hauptdatei `use <recardnize-logo.scad>` ergänzen. Das Modul `recardnize_logo(width=60, height=0.4)` zeichnet nur den Schriftzug. Seine lokale Unterkante liegt bei Y=0 und die Unterseite bei Z=0. Breite und Höhe lassen sich in Millimetern einstellen.
-3. An derselben Logo-Position einen eigenen Zweig für recardnize hinzufügen. Der bestehende Fitness-First-Zweig und dessen Parameter bleiben erhalten. Orientierung, Zentrierung und Aussparung anhand der vorhandenen Hauptdatei bestimmen. Falls das alte Logo bündig oder mit der Druckseite nach unten gefertigt wird, die gleiche Methode auf die neue Form anwenden. OpenSCAD-`color()` beeinflusst die Vorschau. Für eine zweite Filamentfarbe dieselben Koordinaten für Grundkörper und Logo-Materialteil verwenden.
-4. `0,40 mm` ist die gewählte Ausgangshöhe. Bei zwei tatsächlich 0,20 mm hohen Schichten passt das zu deinem jetzigen Verfahren. Erste Schicht und Z-Lage im Slicer prüfen. Bei 60 mm Schriftzugbreite ist der kleinste Buchstabenabstand ungefähr 0,35 mm. Darauf achten, dass der Slicer die Innenräume und den i-Punkt erhält. Falls ein Spalt zuläuft, zuerst die Breite oder die betroffenen Konturen anpassen, soweit die Druckfläche es erlaubt.
-5. Drei Varianten mit denselben Einstellungen exportieren. Alt gegen neu für Fitness First vergleichen, anschließend die Variante ohne Logo und recardnize auf Position, Leserichtung, Farbwechsel und Passform prüfen. Für recardnize erst ein Muster drucken.
+1. Die private Fertigungs-Testkopie `recardnize-fertigung-test` basiert auf dem bestätigten Desktop-Ordner `GymTag_Automation`. Das originale Startskript bleibt der Einstieg für die bestehende Produktion. Für die Tests den separaten Ordner verwenden.
+2. In der Testkopie ist [recardnize-logo.scad](recardnize-logo.scad) bereits mit `use` eingebunden. Das Modul erhält Breite und Höhe in Millimetern und erzeugt die ausgewählte Wortmarke. Der neue Zweig setzt sie mit 74 mm Breite und 0,40 mm Höhe in die mittlere Logo-Zone. Die bestehende Spiegelung und Platzierung für beide Halterteile gilt auch für diesen Zweig.
+3. Erst Basis und Inlay gemeinsam als zwei Teile **eines Objekts** in Bambu Studio öffnen. Die relative Position der STLs beibehalten und dem Inlay wie beim bestehenden Fitness-First-Druck das Kontrastfilament zuweisen.
+4. Bei zwei tatsächlich 0,20 mm hohen Schichten ergibt `0,40 mm` zwei Inlay-Schichten. In der Schichtvorschau erste Schichthöhe, den i-Punkt und die Innenräume beider `e` prüfen. Bei 74 mm Breite beträgt der kleinste Buchstabenabstand ungefähr 0,43 mm.
+5. Ein Muster drucken. Beim Wenden Leserichtung prüfen, anschließend Karte einstecken, entnehmen und am üblichen Leser testen. Die Fitness-First- und Ohne-Logo-STLs aus der Kopie sind im Vergleich mit dem Desktop-Original bytegleich.
 
 Der Ordner enthält die [geprüfte Einzel-STL mit 0,4 mm Höhe](recardnize-logo-60mm-0.4mm.stl). Die Hauptdatei und das Exportskript der Fertigung liegen in einem separaten lokalen Projekt. Dessen Testkopie übernimmt das vorhandene gespiegelte Einlegeverfahren. Dieses Repository enthält die Website und das Logo-Modul.
 
@@ -20,7 +20,7 @@ Der Ordner enthält die [geprüfte Einzel-STL mit 0,4 mm Höhe](recardnize-logo-
 | Studio-Logo | bisheriges `with_logo=true` | `orders.csv`, `include_logo=true`, bestehender Ablauf |
 | recardnize | neues `with_recardnize_logo=true` | `orders-recardnize.csv`, `logo_variant=recardnize` |
 
-Den bestehenden CSV-Import weiter mit `orders.csv` betreiben. Für `orders-recardnize.csv` einen getrennten Eingabezweig hinzufügen, der den neuen Modulaufruf wählt. Die zusätzliche Spalte steht am Ende. Der Import sollte einen fehlenden bzw. unbekannten Variantenwert melden. Beim automatischen Start von OpenSCAD dieselbe Übergabetechnik wie bei den bisherigen Bestellungen verwenden und zulässige Logo-Varianten fest vorgeben. Eine STL oder ein Satz Materialteile je Auftrag mit der Bestellnummer als Zuordnung ablegen.
+Die Testkopie verarbeitet `orders.csv` weiterhin im Standardzweig mit Ausgabe in `generated/`. Für `orders-recardnize.csv` wählt sie das neue Logo und erzeugt STL, Druckliste und Dashboard in `generated-recardnize/`. Das erhält beide Auftragslisten. Die zusätzliche Spalte steht am Ende. Im privaten Ordner liegt die genaue Bedienung für den Test und die Übernahme. Bei eindeutig erkannten Website-Zeilen ohne expliziten Preis rechnet der Generator mit 4,99 € und optional 1,00 € für das Band. Sonstige Eingaben verwenden die bisherige Preisregel.
 
 ## 3. Website-Entwurf freigeben
 
