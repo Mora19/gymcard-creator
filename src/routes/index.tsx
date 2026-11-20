@@ -289,12 +289,12 @@ function LandingPage() {
               "linear-gradient(115deg, transparent 55%, #e63946 55%, #e63946 60%, transparent 60%, transparent 65%, #e63946 65%, #e63946 68%, transparent 68%)",
           }}
         />
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 pb-14 pt-10 md:grid-cols-[1.05fr_1fr] md:items-center md:py-20">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 pb-14 pt-10 md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] md:items-center md:py-20">
           <div>
             <div className="mb-5 inline-flex items-center gap-2 rounded-sm bg-brand px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-brand-foreground">
               <Sparkles className="h-3.5 w-3.5" /> Testaktion · Lokal gefertigt
             </div>
-            <h1 className="font-display text-5xl font-black uppercase leading-[0.95] tracking-tight md:text-7xl">
+            <h1 className="font-display text-[clamp(2.5rem,11vw,3rem)] font-black uppercase leading-[0.95] tracking-tight md:text-[clamp(3rem,6vw,4.5rem)]">
               Nie wieder
               <br />
               <span className="text-brand">Kartenchaos.</span>
@@ -334,6 +334,12 @@ function LandingPage() {
                 </span>
               ))}
             </div>
+            <a
+              href="#fuer-studios"
+              className="mt-5 inline-block rounded-sm text-sm font-semibold text-foreground underline underline-offset-4 hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand md:hidden"
+            >
+              Für Studios und Kooperationen
+            </a>
           </div>
 
           <div className="relative">
@@ -407,7 +413,7 @@ function LandingPage() {
             </h2>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-[1fr_1.1fr]">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
             {/* PREVIEW */}
             <div className="md:sticky md:top-24 md:self-start">
               <div className="rounded-2xl border border-border bg-surface p-6">
@@ -786,7 +792,7 @@ function LandingPage() {
           <Button
             onClick={scrollToConfig}
             size="lg"
-            className="mt-8 h-12 bg-brand px-8 text-base font-black uppercase tracking-wide text-brand-foreground hover:bg-brand/90"
+            className="mt-8 min-h-12 max-w-full whitespace-normal bg-brand px-4 text-base font-black uppercase tracking-wide text-brand-foreground hover:bg-brand/90 sm:px-8"
           >
             Jetzt deinen konfigurieren
           </Button>
@@ -949,7 +955,12 @@ function ToggleRow({
         <div className="text-sm font-semibold">{label}</div>
         {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
       </div>
-      <Switch checked={checked} onCheckedChange={onChange} className="mt-0.5 shrink-0" />
+      <Switch
+        aria-label={label}
+        checked={checked}
+        onCheckedChange={onChange}
+        className="mt-0.5 shrink-0"
+      />
     </div>
   );
 }

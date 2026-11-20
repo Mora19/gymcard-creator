@@ -55,10 +55,9 @@ function Datenschutz() {
         <h2 className="font-display text-lg font-bold text-foreground">Technische Dienste</h2>
         <p>
           Die Website wird über Lovable bereitgestellt. Die beiden Produktfotos werden zusammen mit
-          den Website-Dateien bereitgestellt. Schriftarten werden von Google Fonts geladen. Dabei
-          fallen technisch Verbindungsdaten an, beispielsweise die IP-Adresse. Die konkreten
-          Anbieter, deren Verarbeitung, Speicherorte und mögliche Übermittlungen in Drittländer
-          müssen noch vollständig geprüft und beschrieben werden.
+          den Website-Dateien bereitgestellt. Die Schriftarten werden ebenfalls vom Server der
+          Website geladen. Die konkreten Anbieter, deren Verarbeitung, Speicherorte und mögliche
+          Übermittlungen in Drittländer müssen noch vollständig geprüft und beschrieben werden.
         </p>
       </section>
       <section className="space-y-2">

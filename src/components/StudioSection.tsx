@@ -2,7 +2,7 @@ import { Building2, CheckCircle2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CONTACT_EMAIL, PROVIDER_NAME } from "@/lib/contact";
 
-const studioSubject = encodeURIComponent("recardnize – Muster und Studio-Kooperation anfragen");
+const studioSubject = encodeURIComponent("recardnize – Muster für den Studioalltag");
 
 export function StudioSection() {
   return (
@@ -20,19 +20,22 @@ export function StudioSection() {
             id="studio-heading"
             className="font-display text-3xl font-black uppercase sm:text-4xl"
           >
-            Eine persönliche Karte.
-            <br /> Ein gemeinsamer Praxistest.
+            Mitgliedskarten im Studio leichter zuordnen
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            recardnize ist ein lokal gefertigter, personalisierbarer Halter für Mitgliedskarten. Name,
-            Farbe und eine optionale Telefonnummer machen die Karte individuell erkennbar. Wir
-            suchen Studios, die gemeinsam mit uns prüfen möchten, wie sich der Halter in ihren
-            Alltag einfügt.
+            recardnize ist ein lokal 3D-gedruckter Halter, der Mitgliedskarten mit Namen und Farbe
+            unterscheidbar macht. Die Karte bleibt entnehmbar. Eine Telefonnummer ist beim
+            Aufdruck freiwillig.
           </p>
           <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
-            <li><span className="font-semibold text-foreground">Karte zuordnen:</span> persönliche Beschriftung statt gleich aussehender Karten.</li>
-            <li><span className="font-semibold text-foreground">Pfand abgeben:</span> der Name bleibt am Halter sichtbar, etwa beim Ausleihen von Equipment.</li>
-            <li><span className="font-semibold text-foreground">Rückkontakt ermöglichen:</span> eine Telefonnummer kann auf Wunsch ergänzt werden.</li>
+            <li>
+              <span className="font-semibold text-foreground">Am Empfang.</span> Der Name bleibt
+              sichtbar, wenn Mitglieder ihre Karte als Pfand für einen Gewichtsgürtel abgeben.
+            </li>
+            <li>
+              <span className="font-semibold text-foreground">Im Wellnessbereich.</span> Persönlich
+              beschriftete Karten lassen sich leichter auseinanderhalten.
+            </li>
           </ul>
           <Button
             asChild
@@ -40,34 +43,34 @@ export function StudioSection() {
             className="mt-6 h-auto min-h-10 max-w-full whitespace-normal bg-brand px-5 py-3 text-brand-foreground hover:bg-brand/90"
           >
             <a href={`mailto:${CONTACT_EMAIL}?subject=${studioSubject}`}>
-              <Mail className="h-4 w-4" aria-hidden="true" /> Muster und Kooperation anfragen
+              <Mail className="h-4 w-4" aria-hidden="true" /> Muster anfragen
             </a>
           </Button>
           <p className="mt-3 text-xs text-muted-foreground">
-            Ansprechpartner für die Anfrage: {PROVIDER_NAME} ·{" "}
+            {PROVIDER_NAME} ·{" "}
             <a
               href={`mailto:${CONTACT_EMAIL}?subject=${studioSubject}`}
-              className="break-all underline underline-offset-4"
+              className="inline-block underline underline-offset-4"
             >
               {CONTACT_EMAIL}
             </a>
           </p>
         </div>
         <div className="rounded-2xl border border-border bg-background p-5 sm:p-6">
-          <h3 className="font-display text-lg font-black uppercase">So könnte ein Test starten</h3>
+          <h3 className="font-display text-lg font-black uppercase">Vorschlag für ein Pilotprojekt</h3>
           <ol className="mt-5 space-y-5">
             {[
               {
-                title: "Muster kennenlernen",
-                text: "Ausführung, Personalisierung und ein mögliches Muster gemeinsam besprechen.",
+                title: "Muster am Kartenleser prüfen",
+                text: "Wir prüfen gemeinsam Passform, Entnahme und das Vorhalten an den Lesern im Club.",
               },
               {
-                title: "Alltagstauglichkeit prüfen",
-                text: "Mit einem kleinen, gemeinsam abgestimmten Test Passform, Entnahme, Kartenleser und Zuordnung im Alltag prüfen. Umfang, Dauer und Kosten besprechen wir vorab.",
+                title: "Mit einer kleinen Gruppe starten",
+                text: "Freiwillige Mitglieder probieren den Halter aus. Umfang, Dauer und Kosten stimmen wir mit dem Studio vorab ab.",
               },
               {
-                title: "Gestaltung gemeinsam abstimmen",
-                text: "Eine Ausführung mit Studio-Logo kommt erst nach ausdrücklicher Freigabe infrage.",
+                title: "Rückmeldungen aus dem Alltag auswerten",
+                text: "Mitglieder und Studioteam geben Rückmeldung zur Handhabung und zur Zuordnung beim Ausleihen.",
               },
             ].map((step) => (
               <li key={step.title} className="flex items-start gap-3">
@@ -80,8 +83,8 @@ export function StudioSection() {
             ))}
           </ol>
           <p className="mt-6 border-t border-border pt-4 text-xs leading-relaxed text-muted-foreground">
-            recardnize ist ein unabhängig entwickeltes Produkt. Die gezeigte Logo-Gestaltung ist ein
-            Beispiel zur Abstimmung; eine offizielle Studio-Kooperation besteht derzeit nicht.
+            recardnize ist ein unabhängig entwickeltes Produkt. Eine Ausführung mit Studio-Logo
+            setzt die Freigabe des Studios voraus.
           </p>
         </div>
       </div>
