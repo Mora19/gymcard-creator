@@ -36,7 +36,7 @@ export const submitOrder = createServerFn({ method: "POST" })
       withStudioLogo: data.with_logo,
     });
     if (quotedPrice !== undefined && quotedPrice !== expectedPrice) {
-      throw new Error("Der Preis hat sich geändert. Bitte lade die Seite neu.");
+      return { ok: false, reason: "price_changed" } as const;
     }
 
     const { createClient } = await import("@supabase/supabase-js");
@@ -75,18 +75,42 @@ export const submitOrder = createServerFn({ method: "POST" })
       quantity: data.quantity,
     };
 
-    const procedure = data.with_recardnize_logo ? "create_order_with_recardnize_logo" : "create_order";
-    const { data: row, error } = await supabase
-      .rpc(procedure, { payload })
-      .single();
-
-    if (error) {
-      console.error("[orders.create_order]", JSON.stringify(error), error);
-      throw new Error("Bestellung konnte nicht gespeichert werden.");
+    if (data.with_logo) {
+      return completeOrder(
+        supabase.rpc("create_order_with_checked_studio_price", {
+          payload,
+          expected_unit_price: expectedPrice,
+        }).single(),
+        "studio",
+      );
     }
-    const result = row as { order_number: string; status: string };
-    return { order_number: result.order_number, status: result.status };
+    if (data.with_recardnize_logo) {
+      return completeOrder(
+        supabase.rpc("create_order_with_recardnize_logo", { payload }).single(),
+        "recardnize",
+      );
+    }
+    return completeOrder(supabase.rpc("create_order", { payload }).single(), "standard");
   });
+
+async function completeOrder(
+  response: PromiseLike<{ data: unknown; error: { code: string } | null }>,
+  variant: "standard" | "studio" | "recardnize",
+) {
+  const { data, error } = await response;
+  if (error) {
+    console.error("[orders.create_order]", variant, error.code);
+    if (variant !== "standard" && (error.code === "PGRST202" || error.code === "PT409")) {
+      return { ok: false, reason: "logo_unavailable" } as const;
+    }
+    return { ok: false, reason: "unconfirmed" } as const;
+  }
+  const row = data as { order_number?: string; status?: string } | null;
+  if (!row?.order_number) {
+    return { ok: false, reason: "unconfirmed" } as const;
+  }
+  return { ok: true, order_number: row.order_number, status: row.status } as const;
+}
 
 export type AdminOrder = {
   id: string;

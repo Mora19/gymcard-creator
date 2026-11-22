@@ -198,6 +198,24 @@ function LandingPage() {
         },
       });
 
+      if (!res.ok) {
+        submitLock.current = false;
+        switch (res.reason) {
+          case "logo_unavailable":
+            toast.error("Bestellungen mit diesem Logo sind noch nicht freigeschaltet.", {
+              description: "Deine Eingaben bleiben erhalten. Wähle eine andere Variante oder kontaktiere uns per E-Mail.",
+            });
+            break;
+          case "price_changed":
+            toast.error("Der Preis hat sich geändert. Bitte lade die Seite neu.");
+            break;
+          case "unconfirmed":
+            toast.error(`Wir konnten deine Bestellung nicht bestätigen. Bitte frag vor einem erneuten Versuch bei ${CONTACT_EMAIL} nach.`);
+            break;
+        }
+        return;
+      }
+
       const summary = [
         "*Neue Bestellung Kartenhalter*",
         res?.order_number ? `Bestell-Nr: ${res.order_number}` : null,
@@ -240,7 +258,7 @@ function LandingPage() {
     } catch (err) {
       console.error(err);
       submitLock.current = false;
-      toast.error("Etwas ist schiefgelaufen. Bitte versuche es erneut.");
+      toast.error(`Wir konnten deine Bestellung nicht bestätigen. Bitte frag vor einem erneuten Versuch bei ${CONTACT_EMAIL} nach.`);
     } finally {
       setSubmitting(false);
     }
