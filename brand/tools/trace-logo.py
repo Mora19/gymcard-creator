@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import platform
+from itertools import groupby
 from pathlib import Path
 
 import cv2
@@ -65,24 +66,29 @@ def scad_document(glyphs, width, height):
         f"source_height = {height:g};",
         "",
         "// Dimensions are explicit module parameters; use imports need no global variables.",
-        "module recardnize_logo(width = 60, height = 0.4) {",
+        'module recardnize_logo(width = 60, height = 0.4, part = "all") {',
         '  assert(width > 0 && height > 0, "Positive mm dimensions required");',
+        '  assert(part == "all" || part == "re-nize" || part == "card", "Unknown logo part");',
         "  linear_extrude(height = height, convexity = 10)",
         f"    scale([width/{width:g}, width/{width:g}])",
         "    union() {",
     ]
-    for glyph in glyphs:
-        rings = [glyph["outer"], *glyph["holes"]]
-        flat = [[x, height - y] for ring in rings for x, y in ring]
-        cursor = 0
-        paths = []
-        for ring in rings:
-            paths.append(list(range(cursor, cursor + len(ring))))
-            cursor += len(ring)
-        lines += [
-            f'      // {glyph["id"]}',
-            '      polygon(points=' + json.dumps(flat, separators=(",", ":")) + ', paths=' + json.dumps(paths, separators=(",", ":")) + ', convexity=10);',
-        ]
+    for color, group in groupby(glyphs, key=lambda glyph: glyph["color"]):
+        excluded_part = "re-nize" if color == "accent" else "card"
+        lines.append(f'      if (part != "{excluded_part}") {{')
+        for glyph in group:
+            rings = [glyph["outer"], *glyph["holes"]]
+            flat = [[x, height - y] for ring in rings for x, y in ring]
+            cursor = 0
+            paths = []
+            for ring in rings:
+                paths.append(list(range(cursor, cursor + len(ring))))
+                cursor += len(ring)
+            lines += [
+                f'        // {glyph["id"]}',
+                '        polygon(points=' + json.dumps(flat, separators=(",", ":")) + ', paths=' + json.dumps(paths, separators=(",", ":")) + ', convexity=10);',
+            ]
+        lines.append('      }')
     lines.append('    }')
     lines.append('}')
     lines.append('')

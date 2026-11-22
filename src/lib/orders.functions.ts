@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { getUnitPriceCents } from "@/lib/orderPricing";
 
 const orderSchema = z.object({
   contact_name: z.string().trim().min(1).max(100),
@@ -19,7 +20,7 @@ const orderSchema = z.object({
   with_band: z.boolean(),
   band_color: z.enum(["Rot", "Schwarz", "Weiß"]).optional().or(z.literal("")),
   quantity: z.number().int().min(1).max(99),
-  // Ignored: the binding price is computed server-side in create_order.
+  // Optional quote for older clients. The database calculates the binding price.
   price_cents: z.number().int().nonnegative().optional(),
 }).refine((order) => !order.with_logo || !order.with_recardnize_logo, {
   message: "Bitte wähle nur ein Logo.",
@@ -29,6 +30,15 @@ const orderSchema = z.object({
 export const submitOrder = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => orderSchema.parse(data))
   .handler(async ({ data }) => {
+    const quotedPrice = data.price_cents;
+    const expectedPrice = getUnitPriceCents({
+      withBand: data.with_band,
+      withStudioLogo: data.with_logo,
+    });
+    if (quotedPrice !== undefined && quotedPrice !== expectedPrice) {
+      throw new Error("Der Preis hat sich geändert. Bitte lade die Seite neu.");
+    }
+
     const { createClient } = await import("@supabase/supabase-js");
     const url = process.env.SUPABASE_URL!;
     const key = process.env.SUPABASE_PUBLISHABLE_KEY!;

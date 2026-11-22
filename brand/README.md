@@ -4,6 +4,8 @@ Stand: 16.11.2026. Diese Dateien zeichnen die tatsächlich ausgewählte Wortmark
 
 Ergänzung 18.11.2026: Die SCAD-Datei bietet jetzt das importierbare Modul `recardnize_logo(width=60, height=0.4)` sowie einen zusätzlichen 0,4-mm-STL-Export. Direktes Öffnen der SCAD-Datei behält die früheren 0,6 mm Standardhöhe; alle bisherigen STL-Dateien bleiben erhalten.
 
+Ergänzung 22.11.2026. Für den bündigen Einsatz im Halter exportiert das Modul bei `width=74` und `height=0.4` mit `part="re-nize"` den weißen Teil und mit `part="card"` den roten. Beide Exporte behalten dieselben Ursprungskoordinaten. `part="all"` ist weiterhin der Standard. Die Platzierung und Fertigungsdateien für beide Halterteile stehen in der [Fertigungsanleitung](KONFIGURATOR-UND-FERTIGUNG.md).
+
 ## Direkt nutzbare Dateien
 
 | Datei | Verwendung |

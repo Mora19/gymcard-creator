@@ -63,13 +63,16 @@ function orderToCsvRow(o: AdminOrder, forRecardnize: boolean) {
     o.status,
     o.note ?? "",
     ...(forRecardnize ? ["recardnize"] : []),
+    (o.price_cents / 100).toFixed(2),
   ]
     .map(csvEscape)
     .join(";");
 }
 
 function downloadCsv(orders: AdminOrder[], forRecardnize = false) {
-  const headers = forRecardnize ? [...CSV_HEADERS, "logo_variant"] : CSV_HEADERS;
+  const headers = forRecardnize
+    ? [...CSV_HEADERS, "logo_variant", "unit_price"]
+    : [...CSV_HEADERS, "unit_price"];
   const lines = [headers.join(";"), ...orders.map((order) => orderToCsvRow(order, forRecardnize))];
   const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   CreditCard,
@@ -30,8 +30,14 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import productFront from "@/assets/gymtag-front-transparent.png";
 import productOpen from "@/assets/gymtag-open-transparent.png";
-import recardnizePrintLogo from "@/assets/brand/recardnize-logo-mono.svg";
+import recardnizePrintLogo from "@/assets/brand/recardnize-logo.svg";
 import { submitOrder } from "@/lib/orders.functions";
+import {
+  BAND_SURCHARGE_CENTS,
+  BASE_PRICE_CENTS,
+  STUDIO_LOGO_SURCHARGE_CENTS,
+  getUnitPriceCents,
+} from "@/lib/orderPricing";
 import { CONTACT_EMAIL, getWhatsAppWebUrl } from "@/lib/contact";
 import { CopyTextButton } from "@/components/CopyTextButton";
 import { StudioSection } from "@/components/StudioSection";
@@ -83,10 +89,7 @@ const BAND_HEX: Record<BandColor, string> = {
   Weiß: "#f5f5f5",
 };
 
-const BASE_PRICE = 499; // cents – 4,99 € (must match create_order in DB)
-const BAND_PRICE = 100;
-const PHONE_PRICE = 0;
-const LOGO_PRICE = 0;
+const RECARDNIZE_EXCLUDED_HOLDER_COLORS: readonly HolderColor[] = ["Weiß", "Rot"];
 
 const HOLDER_LOGOS = [
   { value: "none", label: "Ohne Logo" },
@@ -129,14 +132,18 @@ function LandingPage() {
     setLogoChoiceReady(true);
   }, []);
 
-  const unitPriceCents = useMemo(() => {
-    let p = BASE_PRICE;
-    if (withBand) p += BAND_PRICE;
-    if (withPhoneOnHolder) p += PHONE_PRICE;
-    if (holderLogo !== "none") p += LOGO_PRICE;
-    return p;
-  }, [withBand, withPhoneOnHolder, holderLogo]);
+  const unitPriceCents = getUnitPriceCents({ withBand, withStudioLogo: holderLogo === "studio" });
   const priceCents = unitPriceCents * quantity;
+
+  function handleLogoChange(logo: HolderLogo) {
+    setHolderLogo(logo);
+    if (logo === "recardnize" && RECARDNIZE_EXCLUDED_HOLDER_COLORS.includes(holderColor)) {
+      setHolderColor("Schwarz");
+    }
+    if (logo === "recardnize" && textColor === "Schwarz") {
+      setTextColor("Rot");
+    }
+  }
 
   // Prevent identical holder + text color (no contrast)
   const conflictsWithHolder = (t: TextColor) => t === (holderColor as string);
@@ -488,17 +495,25 @@ function LandingPage() {
                           name="holder-logo"
                           value={value}
                           checked={holderLogo === value}
-                          onChange={() => setHolderLogo(value)}
+                          onChange={() => handleLogoChange(value)}
                           className="peer sr-only"
                         />
                         <span className="block rounded-md border border-border bg-background px-3 py-2 text-center text-sm peer-checked:border-brand peer-checked:bg-brand/10 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand">
                           {label}
+                          {value !== "none" && (
+                            <span className="block text-xs text-muted-foreground">
+                              {value === "studio"
+                                ? `+${formatPrice(STUDIO_LOGO_SURCHARGE_CENTS)} / Stück`
+                                : "Inklusive"}
+                            </span>
+                          )}
                         </span>
                       </label>
                     ))}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Studio-Logos brauchen eine Freigabe. recardnize wird in deiner gewählten Textfarbe gedruckt.
+                    Studio-Logos brauchen eine Freigabe. Das recardnize-Logo wird weiß und rot
+                    gedruckt. Deine Textfarbe gilt für Name und Telefonnummer.
                   </p>
                 </fieldset>
               </ConfigCard>
@@ -510,6 +525,10 @@ function LandingPage() {
                   value={holderColor}
                   onChange={setHolderColor}
                   hexMap={HOLDER_HEX}
+                  disabledOptions={
+                    holderLogo === "recardnize" ? RECARDNIZE_EXCLUDED_HOLDER_COLORS : undefined
+                  }
+                  disabledHint="Mit recardnize ist der Halter schwarz oder dunkelgrau, damit beide Logofarben sichtbar bleiben."
                 />
                 <ColorRow
                   label="Textfarbe"
@@ -517,8 +536,14 @@ function LandingPage() {
                   value={textColor}
                   onChange={setTextColor}
                   hexMap={TEXT_HEX}
-                  disabledOptions={TEXT_COLORS.filter(conflictsWithHolder)}
-                  disabledHint="Gleiche Farbe wie der Halter – kein Kontrast."
+                  disabledOptions={TEXT_COLORS.filter(
+                    (color) => conflictsWithHolder(color) || (holderLogo === "recardnize" && color === "Schwarz"),
+                  )}
+                  disabledHint={
+                    holderLogo === "recardnize"
+                      ? "Für recardnize kannst du den Text in Rot oder Weiß drucken."
+                      : "Gleiche Farbe wie der Halter – kein Kontrast."
+                  }
                 />
 
               </ConfigCard>
@@ -526,7 +551,7 @@ function LandingPage() {
               <ConfigCard title="Band für die Flasche">
                 <ToggleRow
                   label="Band hinzufügen"
-                  hint="+1 € · Hängt deine Karte direkt an die Trinkflasche."
+                  hint={`+${formatPrice(BAND_SURCHARGE_CENTS)} · Hängt deine Karte direkt an die Trinkflasche.`}
                   checked={withBand}
                   onChange={setWithBand}
                 />
@@ -782,10 +807,10 @@ function LandingPage() {
             Basis-Halter mit Name in deiner Wunschfarbe. Erweiterbar – ganz nach dir.
           </p>
           <div className="mx-auto mt-8 max-w-md space-y-2 rounded-xl border border-border bg-surface p-6 text-left text-sm">
-            <PriceRow label="Basis-Halter (personalisiert)" value="4,99 €" />
-            <PriceRow label="Band für die Flasche" value="+1,00 €" />
+            <PriceRow label="Basis-Halter (personalisiert)" value={formatPrice(BASE_PRICE_CENTS)} />
+            <PriceRow label="Band für die Flasche" value={`+${formatPrice(BAND_SURCHARGE_CENTS)}`} />
             <PriceRow label="Telefonnummer auf Halter" value="inklusive" />
-            <PriceRow label="Studio-Logo (mit Freigabe)" value="inklusive" />
+            <PriceRow label="Studio-Logo (mit Freigabe)" value={`+${formatPrice(STUDIO_LOGO_SURCHARGE_CENTS)}`} />
             <PriceRow label="recardnize-Logo" value="inklusive" />
             <PriceRow label="Weitere Extras auf Anfrage" value="—" muted />
           </div>
@@ -1042,7 +1067,28 @@ function SummaryRow({ k, v, bold }: { k: string; v: string; bold?: boolean }) {
   );
 }
 
-/* ---------- live preview (real 3D-printed holder, fixed 3-zone layout) ---------- */
+/* Dimensions in millimeters from the readable cross-section of the printed holder. */
+const HOLDER_OUTLINE =
+  "M11.53 0H99.55A4 4 0 0 1 103.55 4V60A4 4 0 0 1 99.55 64H11.53A4 4 0 0 1 7.53 60V48C7.53 46.7 6.89 45.83 5.85 44.86L1.75 41.1C.63 40.08 .03 38.95 .03 37.6V26.4C.03 25.05 .63 23.92 1.75 22.9L5.85 19.14C6.89 18.17 7.53 17.3 7.53 16V4A4 4 0 0 1 11.53 0Z M2.53 27.5A2.5 2.5 0 0 1 7.53 27.5V36.5A2.5 2.5 0 0 1 2.53 36.5Z";
+// Cross-section of the existing studio inlay, in its position on the holder.
+const STUDIO_LOGO_OUTLINE = [
+  "M32.24,24.41 31.67,28.26 26.28,28.26 26.85,24.41Z",
+  "M26.93,35.48 24.24,35.48 25.89,24.41 19.13,24.41 18.56,28.26 21.25,28.26 20.18,35.48 17.48,35.48 16.91,39.33 26.35,39.33Z",
+  "M28.88,29.83 26.04,29.83 25.50,33.49 28.34,33.49Z",
+  "M43.37,29.73 42.53,35.46 41.08,35.46 41.76,30.93 38.74,30.93 37.88,36.76 36.44,36.76 37.90,26.97 42.46,26.97 42.26,28.25 39.14,28.25 38.93,29.73Z",
+  "M78.33,29.73 73.88,29.73 74.11,28.25 77.22,28.25 77.42,26.97 72.85,26.97 71.40,36.76 72.84,36.76 73.70,30.93 76.72,30.93 76.04,35.46 77.48,35.46Z",
+  "M47.64,29.73 46.14,29.73 46.41,28.03 44.93,28.25 44.04,34.53 44.20,35.08 44.62,35.44 45.79,35.55 47.09,35.13 46.75,34.17 45.76,34.43 45.50,34.14 45.98,30.93 47.45,30.93Z",
+  "M91.14,29.73 89.65,29.73 89.91,28.03 88.43,28.25 87.54,34.20 87.59,34.83 88.12,35.45 89.30,35.55 90.59,35.13 90.26,34.17 89.26,34.43 89.00,34.14 89.48,30.93 90.96,30.93Z",
+  "M53.49,31.13 53.41,30.25 53.14,29.85 52.70,29.63 51.49,29.73 50.06,30.33 50.06,29.63 48.83,29.81 47.98,35.46 49.43,35.46 49.99,31.64 51.70,30.98 51.95,31.06 52.02,31.31 51.40,35.46 52.83,35.46Z",
+  "M63.95,29.88 61.74,29.61 61.01,29.73 60.35,30.21 60.03,31.43 60.18,32.17 60.58,32.59 62.00,33.40 62.22,33.93 62.02,34.33 61.67,34.42 59.76,34.14 59.53,35.21 60.63,35.51 61.85,35.56 62.62,35.41 63.13,35.10 63.53,34.23 63.58,33.12 63.13,32.59 61.52,31.61 61.44,31.17 61.57,30.84 61.94,30.74 63.75,30.96Z",
+  "M68.74,29.88 66.53,29.61 65.54,29.85 65.16,30.21 64.83,31.43 64.99,32.17 66.92,33.50 67.02,33.93 66.82,34.33 66.47,34.42 64.56,34.14 64.33,35.21 65.42,35.51 66.67,35.56 67.43,35.41 67.93,35.10 68.33,34.23 68.37,33.12 67.94,32.59 66.32,31.61 66.23,31.17 66.38,30.84 66.73,30.74 68.54,30.96Z",
+  "M86.92,29.88 86.73,30.96 84.92,30.74 84.57,30.84 84.42,31.17 84.50,31.61 86.13,32.59 86.56,33.12 86.51,34.23 86.11,35.10 85.61,35.41 84.85,35.56 83.61,35.51 82.51,35.21 82.74,34.14 84.65,34.42 85.00,34.33 85.20,33.93 85.10,33.50 83.18,32.17 83.01,31.43 83.34,30.21 83.72,29.85 84.72,29.61Z",
+  "M82.44,30.89 80.75,31.92 80.22,35.46 78.78,35.46 79.62,29.81 80.87,29.63 80.84,30.46 82.30,29.61Z",
+  "M59.05,31.09 58.93,31.79 58.55,32.34 57.39,33.00 55.77,33.50 55.70,33.92 55.85,34.33 56.18,34.40 58.39,33.74 58.72,34.82 57.18,35.43 56.01,35.58 55.23,35.48 54.52,35.00 54.27,33.87 54.57,31.78 54.89,30.71 55.28,30.18 56.64,29.61 57.91,29.70 58.72,30.21Z",
+  "M57.67,31.14 57.38,31.71 55.95,32.24 56.10,31.39 56.53,30.83 57.31,30.74Z",
+].join(" ");
+const PRINT_TEXT_X = 16.7;
+const PRINT_FONT = "Segoe UI, Inter, sans-serif";
 
 function HolderPreview({
   holderColor,
@@ -1065,231 +1111,103 @@ function HolderPreview({
   withBand: boolean;
   bandColor: BandColor;
 }) {
-  const recardnizeMaskId = useId();
+  const id = useId();
+  const shadeId = id + "-shade";
+  const textureId = id + "-texture";
   const holderHex = HOLDER_HEX[holderColor];
   const textHex = TEXT_HEX[textColor];
-  const bandHex = BAND_HEX[bandColor];
   const isLightHolder = holderColor === "Weiß";
-
-  // 3D-print line texture
-  const textureLines = Array.from({ length: 46 }, (_, i) => 28 + i * 6);
-
-  const displayName = (name.trim() || "Dein Name").slice(0, 22);
+  const displayName = name.trim() || "Dein Name";
   const displayPhone = phone.trim() || "Deine Nummer";
-
-  // Card body: x=58, w=278 → interior 58..336. Left text baseline:
-  const X_LEFT = 86;
-
-  // Fixed zone Y positions (text baselines, viewBox 360x300)
-  const Y_NAME = 92;
-  const Y_LOGO = 168;
-  const Y_PHONE = 240;
-
-  // Dynamic name sizing: 30 (short) → 16 (max length)
-  const nameLen = displayName.length;
-  const nameFontSize = Math.max(16, Math.min(30, 32 - Math.max(0, nameLen - 8) * 1.05));
-  const phoneFontSize = displayPhone.length > 14 ? 18 : 21;
+  const nameSize = displayName.length > 20 ? 6.7 : displayName.length > 16 ? 7.2 : 8;
+  const phoneSize = displayPhone.length > 16 ? 6.9 : 8;
+  const bandPath = "M5 29C-4 29 -9 19 -15.5 23C-22 27 -22 37 -15.5 41C-9 45 -4 35 5 35";
 
   return (
     <div className="relative mx-auto w-full max-w-sm">
       <svg
-        viewBox="0 0 360 300"
-        className="w-full drop-shadow-2xl"
+        viewBox={withBand ? "-23 -5 131 74" : "-4 -5 112 74"}
+        className="aspect-[131/74] w-full drop-shadow-xl"
+        role="img"
         aria-label="Vorschau Kartenhalter"
       >
         <defs>
-          <linearGradient id="holderShade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.14" />
-            <stop offset="55%" stopColor="#ffffff" stopOpacity="0.02" />
-            <stop offset="100%" stopColor="#000000" stopOpacity="0.4" />
+          <linearGradient id={shadeId} x1="0%" x2="75%" y1="0%" y2="100%">
+            <stop offset="0%" stopColor="#fff" stopOpacity="0.13" />
+            <stop offset="42%" stopColor="#fff" stopOpacity="0.03" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.24" />
           </linearGradient>
-          <filter id="raised" x="-10%" y="-10%" width="120%" height="120%">
-            <feGaussianBlur stdDeviation="0.5" />
-          </filter>
-          <clipPath id="cardClip">
-            <rect x="58" y="30" width="278" height="240" rx="20" />
-          </clipPath>
+          <pattern id={textureId} width="2.6" height="2.35" patternUnits="userSpaceOnUse">
+            <g fill={isLightHolder ? "#000" : "#fff"} opacity={isLightHolder ? 0.09 : 0.21}>
+              <circle cx=".23" cy=".42" r=".13" />
+              <circle cx="1.16" cy=".21" r=".08" />
+              <circle cx=".64" cy="1.54" r=".11" />
+              <circle cx="2.1" cy="1.71" r=".14" />
+              <circle cx="1.82" cy=".87" r=".1" />
+            </g>
+            <g fill="#000" opacity="0.35">
+              <circle cx=".36" cy="1.07" r=".08" />
+              <circle cx="1.42" cy="1.42" r=".12" />
+              <circle cx="2.45" cy=".36" r=".09" />
+            </g>
+          </pattern>
         </defs>
 
-        {/* Band through eyelet */}
         {withBand && (
-          <g>
-            <path
-              d="M 42 152 Q 8 130 22 100 Q 40 78 58 110"
-              stroke={bandHex}
-              strokeWidth="10"
-              fill="none"
-              strokeLinecap="round"
-              opacity="0.95"
-            />
-            <path
-              d="M 42 152 Q 8 130 22 100 Q 40 78 58 110"
-              stroke="#000000"
-              strokeWidth="10"
-              fill="none"
-              strokeLinecap="round"
-              opacity="0.18"
-            />
+          <g strokeLinecap="round" fill="none">
+            <path d={bandPath} stroke={BAND_HEX[bandColor]} strokeWidth="3.6" />
+            <path d={bandPath} stroke="#fff" strokeOpacity=".16" strokeWidth=".45" />
           </g>
         )}
-
-        {/* Eyelet ear */}
-        <g>
-          <path
-            d="M 58 130 Q 36 130 30 150 Q 28 165 30 180 Q 36 200 58 200 Z"
-            fill={holderHex}
-            stroke={isLightHolder ? "#bdbdbd" : "#000000"}
-            strokeWidth="1.2"
-          />
-          <ellipse cx="44" cy="165" rx="9" ry="11" fill="#000000" opacity="0.6" />
-          <ellipse cx="44" cy="165" rx="6" ry="8" fill="#0a0a0a" />
-        </g>
-
-        {/* Card body */}
-        <rect
-          x="58"
-          y="30"
-          width="278"
-          height="240"
-          rx="20"
+        <path
+          d={HOLDER_OUTLINE}
+          fillRule="evenodd"
           fill={holderHex}
-          stroke={isLightHolder ? "#bdbdbd" : "#000000"}
-          strokeWidth="1.4"
+          stroke={isLightHolder ? "#aaa" : "#070708"}
+          strokeWidth=".44"
         />
+        <path d={HOLDER_OUTLINE} fillRule="evenodd" fill={"url(#" + shadeId + ")"} />
+        <path d={HOLDER_OUTLINE} fillRule="evenodd" fill={"url(#" + textureId + ")"} />
 
-        {/* 3D print texture */}
-        <g clipPath="url(#cardClip)" opacity={isLightHolder ? 0.07 : 0.22}>
-          {textureLines.map((y) => (
-            <line
-              key={y}
-              x1="58"
-              x2="336"
-              y1={y}
-              y2={y}
-              stroke={isLightHolder ? "#000000" : "#ffffff"}
-              strokeWidth="0.5"
-            />
-          ))}
-        </g>
-
-        {/* Shading */}
-        <rect x="58" y="30" width="278" height="240" rx="20" fill="url(#holderShade)" />
-
-        {/* ZONE 1 — NAME (top, left-aligned) */}
         {withName && (
-          <g filter="url(#raised)">
-            <text
-              x={X_LEFT}
-              y={Y_NAME}
-              textAnchor="start"
-              fill={textHex}
-              fontFamily="Space Grotesk, sans-serif"
-              fontSize={nameFontSize}
-              fontWeight="800"
-              letterSpacing="0.4"
-            >
-              {displayName}
-            </text>
-          </g>
+          <text
+            x={PRINT_TEXT_X}
+            y="11.8"
+            dominantBaseline="central"
+            fill={textHex}
+            fontFamily={PRINT_FONT}
+            fontSize={nameSize}
+            fontWeight="700"
+          >
+            {displayName}
+          </text>
         )}
 
-        {/* ZONE 2 — LOGO row (middle, left-aligned): F block + "Fitness First" */}
         {logo === "studio" && (
-          <g filter="url(#raised)">
-            {/* F block */}
-            <g transform={`translate(${X_LEFT}, ${Y_LOGO - 32})`}>
-              <rect x="0" y="0" width="40" height="44" rx="3" fill={textHex} />
-              <text
-                x="20"
-                y="35"
-                textAnchor="middle"
-                fill={holderHex}
-                fontFamily="Space Grotesk, sans-serif"
-                fontSize="36"
-                fontWeight="900"
-              >
-                F
-              </text>
-            </g>
-            {/* Fitness First wordmark — single line, like the real card */}
-            <text
-              x={X_LEFT + 50}
-              y={Y_LOGO + 4}
-              fill={textHex}
-              fontFamily="Space Grotesk, sans-serif"
-              fontSize="22"
-              fontWeight="800"
-              fontStyle="italic"
-              letterSpacing="0.4"
-            >
-              Fitness First
-            </text>
-          </g>
+          <path d={STUDIO_LOGO_OUTLINE} fillRule="evenodd" fill={textHex} />
         )}
 
         {logo === "recardnize" && (
-          <g>
-            <mask
-              id={recardnizeMaskId}
-              x={X_LEFT}
-              y={Y_LOGO - 30}
-              width="198"
-              height="30"
-              maskUnits="userSpaceOnUse"
-              style={{ maskType: "alpha" }}
-            >
-              <image href={recardnizePrintLogo} x={X_LEFT} y={Y_LOGO - 30} width="198" height="30" />
-            </mask>
-            <rect
-              x={X_LEFT}
-              y={Y_LOGO - 30}
-              width="198"
-              height="30"
-              fill={textHex}
-              mask={`url(#${recardnizeMaskId})`}
-            />
-          </g>
+          <image href={recardnizePrintLogo} x="16.66" y="25.81" width="74.08" height="11.23" />
         )}
 
-        {/* ZONE 3 — PHONE (bottom, left-aligned) */}
         {withPhone && (
-          <g filter="url(#raised)">
-            <text
-              x={X_LEFT}
-              y={Y_PHONE}
-              textAnchor="start"
-              fill={textHex}
-              fontFamily="Space Grotesk, sans-serif"
-              fontSize={phoneFontSize}
-              fontWeight="800"
-              letterSpacing="0.8"
-            >
-              {displayPhone}
-            </text>
-          </g>
-        )}
-
-        {!withName && !withPhone && logo === "none" && (
           <text
-            x="197"
-            y="158"
-            textAnchor="middle"
+            x={PRINT_TEXT_X}
+            y="52.1"
+            dominantBaseline="central"
             fill={textHex}
-            opacity="0.5"
-            fontFamily="Inter, sans-serif"
-            fontSize="13"
+            fontFamily={PRINT_FONT}
+            fontSize={phoneSize}
+            fontWeight="700"
           >
-            Aktiviere eine Option für die Vorschau
+            {displayPhone}
           </text>
         )}
       </svg>
 
-
-
       <div className="mt-3 space-y-1 text-center">
-        <div className="text-xs text-muted-foreground">
-          Live-Vorschau · echte 3D-Druck-Optik
-        </div>
+        <div className="text-xs text-muted-foreground">Live-Vorschau des Halters</div>
         {logo === "studio" && (
           <div className="text-[11px] text-muted-foreground/80">
             Studio-Logo nur mit offizieller Freigabe möglich.
@@ -1299,4 +1217,3 @@ function HolderPreview({
     </div>
   );
 }
-
